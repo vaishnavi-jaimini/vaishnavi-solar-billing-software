@@ -120,7 +120,7 @@ public class ReportsController : ControllerBase
     public async Task<ActionResult<DashboardDto>> Dashboard()
     {
         var now = DateTime.UtcNow;
-        var monthStart = new DateTime(now.Year, now.Month, 1);
+        var monthStart = new DateTime(now.Year, now.Month, 1, 0, 0, 0, DateTimeKind.Utc);
 
         var invoicesThisMonth = await _db.Invoices
             .Where(i => i.InvoiceDate >= monthStart)
