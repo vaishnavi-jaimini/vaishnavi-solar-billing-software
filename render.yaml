@@ -24,7 +24,6 @@ services:
   - type: web
     name: vaishnavi-solar-app
     runtime: static
-    plan: free
     buildCommand: cd frontend/vaishnavi-solar-app && npm ci && npm run build -- --configuration production
     staticPublishPath: frontend/vaishnavi-solar-app/dist/vaishnavi-solar-app/browser
     routes:
