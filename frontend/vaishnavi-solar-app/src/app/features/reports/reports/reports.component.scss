@@ -1,0 +1,23 @@
+.tab-body {
+  padding: 20px 4px;
+}
+.filter-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.summary-row {
+  display: flex;
+  gap: 32px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+.balance-cell {
+  color: #c62828;
+  font-weight: 600;
+}
+.low-stock {
+  color: #c62828;
+  font-weight: 600;
+}

@@ -1,0 +1,6 @@
+@VaishnaviSolar.Api_HostAddress = http://localhost:5215
+
+GET {{VaishnaviSolar.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

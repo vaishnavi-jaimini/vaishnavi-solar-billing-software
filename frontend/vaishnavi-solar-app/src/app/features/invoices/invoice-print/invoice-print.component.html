@@ -1,0 +1,150 @@
+<div class="print-toolbar no-print">
+  <a mat-button routerLink="/invoices"><mat-icon>arrow_back</mat-icon> Back</a>
+  <button mat-flat-button color="primary" (click)="print()"><mat-icon>print</mat-icon> Print</button>
+</div>
+
+@if (invoice; as invoice) {
+  @if (company; as company) {
+    <div class="invoice-sheet">
+      <div class="invoice-header">
+        <div>
+          <img class="company-logo" src="/images/vaishnavi-solar-logo.png" alt="{{ company.name }}" />
+          <div class="company-detail">{{ company.address }}</div>
+          <div class="company-detail">{{ company.city }}, {{ company.state }} - {{ company.pincode }}</div>
+          <div class="company-detail">GSTIN: {{ company.gstin || '—' }}</div>
+          <div class="company-detail">Phone: {{ company.phone }} | Email: {{ company.email }}</div>
+        </div>
+        <div class="invoice-title-block">
+          <div class="invoice-title">TAX INVOICE</div>
+          <div class="invoice-number">{{ invoice.invoiceNumber }}</div>
+          <div class="invoice-date">Date: {{ invoice.invoiceDate | date: 'dd-MMM-yyyy' }}</div>
+        </div>
+      </div>
+
+      <div class="parties">
+        <div class="party-box">
+          <div class="party-label">Bill To</div>
+          <div class="party-name">{{ invoice.customerName }}</div>
+          <div class="party-detail">Place of Supply: {{ invoice.placeOfSupply }}</div>
+          <div class="party-detail">{{ invoice.isInterState ? 'Inter-state (IGST)' : 'Intra-state (CGST + SGST)' }}</div>
+        </div>
+        <div class="party-box">
+          <div class="party-label">Ship To</div>
+          <div class="party-name">{{ invoice.shipToName }}</div>
+          <div class="party-detail">{{ invoice.shipToAddress }}</div>
+          <div class="party-detail">{{ invoice.shipToCity }}, {{ invoice.shipToState }} @if (invoice.shipToPincode) { - {{ invoice.shipToPincode }} }</div>
+        </div>
+      </div>
+
+      <table class="items-table">
+        <colgroup>
+          <col style="width: 4%" />
+          <col style="width: 22%" />
+          <col style="width: 9%" />
+          <col style="width: 7%" />
+          <col style="width: 10%" />
+          <col style="width: 12%" />
+          <col style="width: 12%" />
+          <col style="width: 12%" />
+          <col style="width: 12%" />
+        </colgroup>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Description</th>
+            <th>HSN/SAC</th>
+            <th>Qty</th>
+            <th>Rate</th>
+            <th>CGST</th>
+            <th>SGST</th>
+            <th>IGST</th>
+            <th>Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (line of invoice.items; track line.id; let i = $index) {
+            <tr>
+              <td>{{ i + 1 }}</td>
+              <td>{{ line.description }}</td>
+              <td>{{ line.hsnSacCode }}</td>
+              <td>{{ line.quantity }} {{ line.unit }}</td>
+              <td>₹{{ line.rate | number: '1.2-2' }}</td>
+              <td>
+                @if (line.cgstAmount > 0) { ₹{{ line.cgstAmount | number: '1.2-2' }} ({{ line.gstPercent / 2 }}%) } @else { — }
+              </td>
+              <td>
+                @if (line.sgstAmount > 0) { ₹{{ line.sgstAmount | number: '1.2-2' }} ({{ line.gstPercent / 2 }}%) } @else { — }
+              </td>
+              <td>
+                @if (line.igstAmount > 0) { ₹{{ line.igstAmount | number: '1.2-2' }} ({{ line.gstPercent }}%) } @else { — }
+              </td>
+              <td>₹{{ line.amount | number: '1.2-2' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+
+      <div class="summary-block">
+        <div class="amount-words">
+          <div class="party-label">Amount in Words</div>
+          <div>{{ amountInWords(invoice.grandTotal) }}</div>
+        </div>
+        <table class="totals-table">
+          <tr>
+            <td>Subtotal</td>
+            <td>₹{{ invoice.subtotal | number: '1.2-2' }}</td>
+          </tr>
+          <tr>
+            <td>CGST</td>
+            <td>₹{{ invoice.cgstAmount | number: '1.2-2' }}</td>
+          </tr>
+          <tr>
+            <td>SGST</td>
+            <td>₹{{ invoice.sgstAmount | number: '1.2-2' }}</td>
+          </tr>
+          <tr>
+            <td>IGST</td>
+            <td>₹{{ invoice.igstAmount | number: '1.2-2' }}</td>
+          </tr>
+          <tr class="grand-row">
+            <td>Grand Total</td>
+            <td>₹{{ invoice.grandTotal | number: '1.2-2' }}</td>
+          </tr>
+          <tr>
+            <td>Amount Paid</td>
+            <td>₹{{ invoice.amountPaid | number: '1.2-2' }}</td>
+          </tr>
+          <tr class="balance-row">
+            <td>Balance Due</td>
+            <td>₹{{ invoice.balance | number: '1.2-2' }}</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="declaration">
+        <div class="party-label">Declaration</div>
+        <p>
+          We declare that this Invoice shows the actual price of the goods described and that all particulars are
+          true and correct. Freight Charges will be Extra as per Actuals on TO-PAY Basis. Goods once Sold will not
+          be taken Back or Exchanged. Warranty Void of Solar Inverter if ACDB &amp; DCDB is not Installed at site.
+        </p>
+      </div>
+
+      <div class="footer">
+        <div class="bank-details">
+          <div class="party-label">Bank Details</div>
+          <div>{{ company.bankName }}</div>
+          <div>A/c No: {{ company.bankAccountNo }}</div>
+          <div>IFSC: {{ company.bankIfsc }}</div>
+        </div>
+        <div class="signature">
+          <div class="signature-line">For {{ company.name }}</div>
+          <div class="signature-space"></div>
+          <div>Authorized Signatory</div>
+        </div>
+      </div>
+    </div>
+  }
+} @else {
+  <p class="no-print">Loading invoice…</p>
+}

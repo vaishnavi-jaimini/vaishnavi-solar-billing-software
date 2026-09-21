@@ -1,0 +1,52 @@
+<h2 mat-dialog-title>{{ data.item ? 'Edit Item' : 'Add Item' }}</h2>
+<form [formGroup]="form" (ngSubmit)="save()">
+  <div mat-dialog-content>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Item Name</mat-label>
+      <input matInput formControlName="name" />
+    </mat-form-field>
+    <div class="spacer-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Category</mat-label>
+        <mat-select formControlName="category">
+          @for (c of categories; track c) {
+            <mat-option [value]="c">{{ categoryLabels[c] }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>HSN/SAC Code</mat-label>
+        <input matInput formControlName="hsnSacCode" />
+      </mat-form-field>
+    </div>
+    <div class="spacer-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Unit</mat-label>
+        <mat-select formControlName="unit">
+          @for (u of units; track u) {
+            <mat-option [value]="u">{{ u }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Rate (₹)</mat-label>
+        <input matInput type="number" formControlName="rate" />
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>GST %</mat-label>
+        <input matInput type="number" formControlName="gstPercent" />
+      </mat-form-field>
+    </div>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Low Stock Threshold</mat-label>
+      <input matInput type="number" formControlName="lowStockThreshold" />
+    </mat-form-field>
+    <mat-checkbox formControlName="isService">This is a service (no stock tracking)</mat-checkbox>
+    <br />
+    <mat-checkbox formControlName="isActive">Active</mat-checkbox>
+  </div>
+  <div mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="cancel()">Cancel</button>
+    <button mat-flat-button color="primary" type="submit">Save</button>
+  </div>
+</form>

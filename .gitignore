@@ -1,0 +1,23 @@
+# .NET
+backend/**/bin/
+backend/**/obj/
+*.user
+
+# Angular / Node
+frontend/**/node_modules/
+frontend/**/dist/
+frontend/**/.angular/
+npm-debug.log*
+
+# Editor / OS
+.vs/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Claude Code local state
+.claude/
+
+# Logs
+*.log

@@ -1,0 +1,45 @@
+<h2 mat-dialog-title>Record Payment</h2>
+<form [formGroup]="form" (ngSubmit)="save()">
+  <div mat-dialog-content>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Invoice</mat-label>
+      <mat-select formControlName="invoiceId" (selectionChange)="onInvoiceSelected()">
+        @for (inv of unpaidInvoices; track inv.id) {
+          <mat-option [value]="inv.id">
+            {{ inv.invoiceNumber }} — {{ inv.customerName }} (Balance ₹{{ inv.balance | number: '1.2-2' }})
+          </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <div class="spacer-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Payment Date</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="paymentDate" />
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Amount</mat-label>
+        <input matInput type="number" formControlName="amount" />
+      </mat-form-field>
+    </div>
+    <div class="spacer-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Mode</mat-label>
+        <mat-select formControlName="mode">
+          @for (m of modes; track m) {
+            <mat-option [value]="m">{{ m }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Reference No (optional)</mat-label>
+        <input matInput formControlName="referenceNo" />
+      </mat-form-field>
+    </div>
+  </div>
+  <div mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="cancel()">Cancel</button>
+    <button mat-flat-button color="primary" type="submit">Save Payment</button>
+  </div>
+</form>

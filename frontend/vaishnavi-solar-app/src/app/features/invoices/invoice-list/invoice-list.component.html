@@ -1,0 +1,47 @@
+<div class="page-header">
+  <h1>Invoices</h1>
+  <a mat-flat-button color="primary" routerLink="/invoices/new">
+    <mat-icon>add</mat-icon> New Invoice
+  </a>
+</div>
+
+<table mat-table [dataSource]="invoices" class="mat-elevation-z1">
+  <ng-container matColumnDef="invoiceNumber">
+    <th mat-header-cell *matHeaderCellDef>Invoice #</th>
+    <td mat-cell *matCellDef="let i">
+      <a [routerLink]="['/invoices', i.id]">{{ i.invoiceNumber }}</a>
+    </td>
+  </ng-container>
+  <ng-container matColumnDef="date">
+    <th mat-header-cell *matHeaderCellDef>Date</th>
+    <td mat-cell *matCellDef="let i">{{ i.invoiceDate | date: 'dd-MMM-yyyy' }}</td>
+  </ng-container>
+  <ng-container matColumnDef="customerName">
+    <th mat-header-cell *matHeaderCellDef>Customer</th>
+    <td mat-cell *matCellDef="let i">{{ i.customerName }}</td>
+  </ng-container>
+  <ng-container matColumnDef="grandTotal">
+    <th mat-header-cell *matHeaderCellDef>Total</th>
+    <td mat-cell *matCellDef="let i">₹{{ i.grandTotal | number: '1.2-2' }}</td>
+  </ng-container>
+  <ng-container matColumnDef="balance">
+    <th mat-header-cell *matHeaderCellDef>Balance</th>
+    <td mat-cell *matCellDef="let i">₹{{ i.balance | number: '1.2-2' }}</td>
+  </ng-container>
+  <ng-container matColumnDef="status">
+    <th mat-header-cell *matHeaderCellDef>Status</th>
+    <td mat-cell *matCellDef="let i">
+      <span [class]="statusClass(i.status)">{{ i.status }}</span>
+    </td>
+  </ng-container>
+  <ng-container matColumnDef="actions">
+    <th mat-header-cell *matHeaderCellDef></th>
+    <td mat-cell *matCellDef="let i">
+      <a mat-icon-button [routerLink]="['/invoices', i.id]"><mat-icon>visibility</mat-icon></a>
+      <a mat-icon-button [routerLink]="['/invoices', i.id, 'print']"><mat-icon>print</mat-icon></a>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="columns"></tr>
+  <tr mat-row *matRowDef="let row; columns: columns"></tr>
+</table>

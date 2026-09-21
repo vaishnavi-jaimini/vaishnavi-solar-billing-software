@@ -1,0 +1,144 @@
+<div class="print-toolbar no-print">
+  <a mat-button routerLink="/proforma-invoices"><mat-icon>arrow_back</mat-icon> Back</a>
+  <button mat-flat-button color="primary" (click)="print()"><mat-icon>print</mat-icon> Print</button>
+</div>
+
+@if (proforma; as proforma) {
+  @if (company; as company) {
+    <div class="invoice-sheet">
+      <div class="invoice-header">
+        <div>
+          <img class="company-logo" src="/images/vaishnavi-solar-logo.png" alt="{{ company.name }}" />
+          <div class="company-detail">{{ company.address }}</div>
+          <div class="company-detail">{{ company.city }}, {{ company.state }} - {{ company.pincode }}</div>
+          <div class="company-detail">GSTIN: {{ company.gstin || '—' }}</div>
+          <div class="company-detail">Phone: {{ company.phone }} | Email: {{ company.email }}</div>
+        </div>
+        <div class="invoice-title-block">
+          <div class="invoice-title">PROFORMA INVOICE</div>
+          <div class="not-tax-note">This is not a Tax Invoice</div>
+          <div class="invoice-number">{{ proforma.proformaNumber }}</div>
+          <div class="invoice-date">Date: {{ proforma.proformaDate | date: 'dd-MMM-yyyy' }}</div>
+        </div>
+      </div>
+
+      <div class="parties">
+        <div class="party-box">
+          <div class="party-label">Bill To</div>
+          <div class="party-name">{{ proforma.customerName }}</div>
+          <div class="party-detail">Place of Supply: {{ proforma.placeOfSupply }}</div>
+          <div class="party-detail">{{ proforma.isInterState ? 'Inter-state (IGST)' : 'Intra-state (CGST + SGST)' }}</div>
+        </div>
+        <div class="party-box">
+          <div class="party-label">Ship To</div>
+          <div class="party-name">{{ proforma.shipToName }}</div>
+          <div class="party-detail">{{ proforma.shipToAddress }}</div>
+          <div class="party-detail">{{ proforma.shipToCity }}, {{ proforma.shipToState }} @if (proforma.shipToPincode) { - {{ proforma.shipToPincode }} }</div>
+        </div>
+      </div>
+
+      <table class="items-table">
+        <colgroup>
+          <col style="width: 4%" />
+          <col style="width: 22%" />
+          <col style="width: 9%" />
+          <col style="width: 7%" />
+          <col style="width: 10%" />
+          <col style="width: 12%" />
+          <col style="width: 12%" />
+          <col style="width: 12%" />
+          <col style="width: 12%" />
+        </colgroup>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Description</th>
+            <th>HSN/SAC</th>
+            <th>Qty</th>
+            <th>Rate</th>
+            <th>CGST</th>
+            <th>SGST</th>
+            <th>IGST</th>
+            <th>Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (line of proforma.items; track line.id; let i = $index) {
+            <tr>
+              <td>{{ i + 1 }}</td>
+              <td>{{ line.description }}</td>
+              <td>{{ line.hsnSacCode }}</td>
+              <td>{{ line.quantity }} {{ line.unit }}</td>
+              <td>₹{{ line.rate | number: '1.2-2' }}</td>
+              <td>
+                @if (line.cgstAmount > 0) { ₹{{ line.cgstAmount | number: '1.2-2' }} ({{ line.gstPercent / 2 }}%) } @else { — }
+              </td>
+              <td>
+                @if (line.sgstAmount > 0) { ₹{{ line.sgstAmount | number: '1.2-2' }} ({{ line.gstPercent / 2 }}%) } @else { — }
+              </td>
+              <td>
+                @if (line.igstAmount > 0) { ₹{{ line.igstAmount | number: '1.2-2' }} ({{ line.gstPercent }}%) } @else { — }
+              </td>
+              <td>₹{{ line.amount | number: '1.2-2' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+
+      <div class="summary-block">
+        <div class="amount-words">
+          <div class="party-label">Amount in Words</div>
+          <div>{{ amountInWords(proforma.grandTotal) }}</div>
+        </div>
+        <table class="totals-table">
+          <tr>
+            <td>Subtotal</td>
+            <td>₹{{ proforma.subtotal | number: '1.2-2' }}</td>
+          </tr>
+          <tr>
+            <td>CGST</td>
+            <td>₹{{ proforma.cgstAmount | number: '1.2-2' }}</td>
+          </tr>
+          <tr>
+            <td>SGST</td>
+            <td>₹{{ proforma.sgstAmount | number: '1.2-2' }}</td>
+          </tr>
+          <tr>
+            <td>IGST</td>
+            <td>₹{{ proforma.igstAmount | number: '1.2-2' }}</td>
+          </tr>
+          <tr class="grand-row">
+            <td>Grand Total (Estimated)</td>
+            <td>₹{{ proforma.grandTotal | number: '1.2-2' }}</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="declaration">
+        <div class="party-label">Declaration</div>
+        <p>
+          This is a Proforma Invoice issued for estimation purposes only and does not constitute a demand for
+          payment or a Tax Invoice under GST. Prices, taxes and availability are subject to change until a final
+          Tax Invoice is issued. Freight Charges will be Extra as per Actuals on TO-PAY Basis. Warranty Void of
+          Solar Inverter if ACDB &amp; DCDB is not Installed at site.
+        </p>
+      </div>
+
+      <div class="footer">
+        <div class="bank-details">
+          <div class="party-label">Bank Details</div>
+          <div>{{ company.bankName }}</div>
+          <div>A/c No: {{ company.bankAccountNo }}</div>
+          <div>IFSC: {{ company.bankIfsc }}</div>
+        </div>
+        <div class="signature">
+          <div class="signature-line">For {{ company.name }}</div>
+          <div class="signature-space"></div>
+          <div>Authorized Signatory</div>
+        </div>
+      </div>
+    </div>
+  }
+} @else {
+  <p class="no-print">Loading proforma invoice…</p>
+}

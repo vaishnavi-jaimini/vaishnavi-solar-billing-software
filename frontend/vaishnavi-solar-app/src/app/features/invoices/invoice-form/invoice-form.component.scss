@@ -1,0 +1,98 @@
+.header-actions {
+  display: flex;
+  gap: 8px;
+}
+.spacer-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.full-width {
+  flex: 1 1 220px;
+}
+.gst-note {
+  background: #e3f2fd;
+  color: #1565c0;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  margin-bottom: 12px;
+  display: inline-block;
+}
+.line-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 4px;
+}
+.line-item {
+  flex: 3;
+}
+.line-qty, .line-rate, .line-gst {
+  flex: 1;
+}
+.line-amount {
+  flex: 1;
+  text-align: right;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.notes-field {
+  display: block;
+  margin-top: 16px;
+}
+.totals {
+  margin-top: 20px;
+  text-align: right;
+  font-size: 15px;
+
+  .grand {
+    font-size: 18px;
+    font-weight: 700;
+    margin-top: 4px;
+  }
+  .balance {
+    font-weight: 700;
+    color: #c62828;
+  }
+}
+.view-meta {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.parties-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+.party-box {
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 12px 16px;
+  min-width: 260px;
+  flex: 1 1 260px;
+}
+.party-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  opacity: 0.6;
+  margin-bottom: 4px;
+}
+.party-name {
+  font-weight: 600;
+  font-size: 14px;
+}
+.party-detail {
+  font-size: 12px;
+  opacity: 0.85;
+}
+.ship-to-row {
+  margin-top: 8px;
+}
+h3 {
+  margin-top: 20px;
+  margin-bottom: 8px;
+}

@@ -1,0 +1,46 @@
+.spacer-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.full-width {
+  flex: 1 1 220px;
+}
+.line-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 4px;
+}
+.line-item {
+  flex: 3;
+}
+.line-qty, .line-rate, .line-gst {
+  flex: 1;
+}
+.line-amount {
+  flex: 1;
+  text-align: right;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.notes-field {
+  display: block;
+  margin-top: 16px;
+}
+.totals {
+  margin-top: 20px;
+  text-align: right;
+  font-size: 15px;
+
+  .grand {
+    font-size: 18px;
+    font-weight: 700;
+    margin-top: 4px;
+  }
+}
+.view-meta {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 16px;
+}

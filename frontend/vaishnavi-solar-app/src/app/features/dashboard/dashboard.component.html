@@ -1,0 +1,54 @@
+<div class="page-header">
+  <h1>Dashboard</h1>
+  <div>
+    <a mat-flat-button color="primary" routerLink="/invoices/new">
+      <mat-icon>add</mat-icon> New Invoice
+    </a>
+  </div>
+</div>
+
+@if (data) {
+  <div class="stat-grid">
+    <mat-card class="stat-card">
+      <mat-icon class="stat-icon" style="color:#1565c0">payments</mat-icon>
+      <div class="stat-value">{{ formatInr(data.salesThisMonth) }}</div>
+      <div class="stat-label">Sales this month</div>
+    </mat-card>
+    <mat-card class="stat-card">
+      <mat-icon class="stat-icon" style="color:#c62828">error_outline</mat-icon>
+      <div class="stat-value">{{ formatInr(data.outstandingDues) }}</div>
+      <div class="stat-label">Outstanding dues</div>
+    </mat-card>
+    <mat-card class="stat-card">
+      <mat-icon class="stat-icon" style="color:#2e7d32">receipt_long</mat-icon>
+      <div class="stat-value">{{ data.invoiceCountThisMonth }}</div>
+      <div class="stat-label">Invoices this month</div>
+    </mat-card>
+    <mat-card class="stat-card" [class.stat-warning]="data.lowStockCount > 0">
+      <mat-icon class="stat-icon" style="color:#ef6c00">inventory_2</mat-icon>
+      <div class="stat-value">{{ data.lowStockCount }}</div>
+      <div class="stat-label">Low stock items</div>
+    </mat-card>
+  </div>
+
+  <mat-card class="trend-card">
+    <div class="trend-title">Sales trend (last 6 months)</div>
+    <div class="trend-chart">
+      @for (point of data.salesTrend; track point.label; let i = $index) {
+        <div
+          class="trend-col"
+          (mouseenter)="hoverIndex = i"
+          (mouseleave)="hoverIndex = null"
+        >
+          @if (hoverIndex === i) {
+            <div class="trend-tooltip">{{ formatInr(point.total) }}</div>
+          }
+          <div class="trend-bar" [style.height.px]="barHeight(point.total)"></div>
+          <div class="trend-axis-label">{{ point.label }}</div>
+        </div>
+      }
+    </div>
+  </mat-card>
+} @else {
+  <p>Loading dashboard…</p>
+}

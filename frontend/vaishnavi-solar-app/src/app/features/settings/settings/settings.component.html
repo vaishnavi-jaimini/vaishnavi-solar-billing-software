@@ -1,0 +1,73 @@
+<div class="page-header">
+  <h1>Company Settings</h1>
+</div>
+
+<form [formGroup]="form" (ngSubmit)="save()" class="settings-form">
+  <h3>Business Details</h3>
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Company Name</mat-label>
+    <input matInput formControlName="name" />
+  </mat-form-field>
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Address</mat-label>
+    <textarea matInput formControlName="address" rows="2"></textarea>
+  </mat-form-field>
+  <div class="spacer-row">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>City</mat-label>
+      <input matInput formControlName="city" />
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>State</mat-label>
+      <mat-select formControlName="state">
+        @for (s of states; track s) {
+          <mat-option [value]="s">{{ s }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Pincode</mat-label>
+      <input matInput formControlName="pincode" />
+    </mat-form-field>
+  </div>
+  <div class="spacer-row">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>GSTIN</mat-label>
+      <input matInput formControlName="gstin" />
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Phone</mat-label>
+      <input matInput formControlName="phone" />
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Email</mat-label>
+      <input matInput formControlName="email" type="email" />
+    </mat-form-field>
+  </div>
+
+  <h3>Bank Details (for invoice footer)</h3>
+  <div class="spacer-row">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Bank Name</mat-label>
+      <input matInput formControlName="bankName" />
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Account No</mat-label>
+      <input matInput formControlName="bankAccountNo" />
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>IFSC</mat-label>
+      <input matInput formControlName="bankIfsc" />
+    </mat-form-field>
+  </div>
+
+  <h3>Invoicing</h3>
+  <mat-form-field appearance="outline" class="full-width narrow">
+    <mat-label>Invoice Number Prefix</mat-label>
+    <input matInput formControlName="invoicePrefix" />
+  </mat-form-field>
+
+  <div class="actions">
+    <button mat-flat-button color="primary" type="submit" [disabled]="saving">Save Settings</button>
+  </div>
+</form>
