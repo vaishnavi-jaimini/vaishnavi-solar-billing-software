@@ -69,14 +69,6 @@ using (var scope = app.Services.CreateScope())
     {
         // No Postgres migration set is maintained; build the schema straight from the current model.
         db.Database.EnsureCreated();
-
-        // TEMPORARY: one-time removal of test data (see RemoveTestData migration). Idempotent; delete once it has run.
-        using var tx = db.Database.BeginTransaction();
-        foreach (var sql in VaishnaviSolar.Api.Migrations.RemoveTestData.Statements())
-        {
-            db.Database.ExecuteSqlRaw(sql);
-        }
-        tx.Commit();
     }
     else
     {
