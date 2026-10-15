@@ -13,9 +13,19 @@ public class ReportsController : ControllerBase
     private readonly AppDbContext _db;
     public ReportsController(AppDbContext db) => _db = db;
 
+    // Npgsql rejects non-UTC DateTimes for timestamptz columns; date-only query params bind as Unspecified.
+    private static DateTime? ToUtc(DateTime? value) => value is not { } v ? null : v.Kind switch
+    {
+        DateTimeKind.Utc => v,
+        DateTimeKind.Local => v.ToUniversalTime(),
+        _ => DateTime.SpecifyKind(v, DateTimeKind.Utc)
+    };
+
     [HttpGet("sales")]
     public async Task<ActionResult<SalesReportDto>> Sales([FromQuery] DateTime? from, [FromQuery] DateTime? to)
     {
+        from = ToUtc(from);
+        to = ToUtc(to);
         var query = _db.Invoices.Include(i => i.Customer).AsQueryable();
         if (from.HasValue) query = query.Where(i => i.InvoiceDate >= from.Value);
         if (to.HasValue) query = query.Where(i => i.InvoiceDate <= to.Value);
@@ -44,6 +54,8 @@ public class ReportsController : ControllerBase
     [HttpGet("gst-summary")]
     public async Task<ActionResult<GstSummaryDto>> GstSummary([FromQuery] DateTime? from, [FromQuery] DateTime? to)
     {
+        from = ToUtc(from);
+        to = ToUtc(to);
         var query = _db.InvoiceItems.Include(x => x.Invoice).AsQueryable();
         if (from.HasValue) query = query.Where(x => x.Invoice!.InvoiceDate >= from.Value);
         if (to.HasValue) query = query.Where(x => x.Invoice!.InvoiceDate <= to.Value);
