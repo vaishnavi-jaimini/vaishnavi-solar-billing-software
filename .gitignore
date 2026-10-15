@@ -21,3 +21,6 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Local data backups (contain customer data)
+backups/
