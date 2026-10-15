@@ -19,7 +19,7 @@ public class InvoiceService
         var company = await _db.Companies.FirstAsync();
         var customer = await _db.Customers.FindAsync(customerId);
         bool interState = customer != null &&
-            !string.Equals(customer.State?.Trim(), company.State?.Trim(), StringComparison.OrdinalIgnoreCase);
+            !string.Equals(customer.State.Trim(), company.State.Trim(), StringComparison.OrdinalIgnoreCase);
 
         if (interState)
         {
@@ -34,7 +34,7 @@ public class InvoiceService
         var company = await _db.Companies.FirstAsync();
         var customer = await _db.Customers.FindAsync(customerId);
         return customer != null &&
-            !string.Equals(customer.State?.Trim(), company.State?.Trim(), StringComparison.OrdinalIgnoreCase);
+            !string.Equals(customer.State.Trim(), company.State.Trim(), StringComparison.OrdinalIgnoreCase);
     }
 
     public async Task<Invoice> CreateInvoiceAsync(InvoiceUpsertDto dto)
@@ -42,7 +42,7 @@ public class InvoiceService
         var company = await _db.Companies.FirstAsync();
         var customer = await _db.Customers.FindAsync(dto.CustomerId)
             ?? throw new InvalidOperationException("Customer not found");
-        bool interState = !string.Equals(customer.State?.Trim(), company.State?.Trim(), StringComparison.OrdinalIgnoreCase);
+        bool interState = !string.Equals(customer.State.Trim(), company.State.Trim(), StringComparison.OrdinalIgnoreCase);
 
         bool useBillingAddress = dto.ShipSameAsBilling || string.IsNullOrWhiteSpace(dto.ShipToName);
 

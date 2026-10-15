@@ -19,7 +19,7 @@ public class ProformaInvoiceService
         var company = await _db.Companies.FirstAsync();
         var customer = await _db.Customers.FindAsync(dto.CustomerId)
             ?? throw new InvalidOperationException("Customer not found");
-        bool interState = !string.Equals(customer.State?.Trim(), company.State?.Trim(), StringComparison.OrdinalIgnoreCase);
+        bool interState = !string.Equals(customer.State.Trim(), company.State.Trim(), StringComparison.OrdinalIgnoreCase);
 
         bool useBillingAddress = dto.ShipSameAsBilling || string.IsNullOrWhiteSpace(dto.ShipToName);
 
