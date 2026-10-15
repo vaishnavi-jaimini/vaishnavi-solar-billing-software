@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -20,36 +20,48 @@ namespace VaishnaviSolar.Api.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            foreach (var sql in Statements())
+            {
+                migrationBuilder.Sql(sql);
+            }
+        }
+
+        /// <summary>
+        /// The cleanup statements, in dependency order. Also run directly at startup on PostgreSQL,
+        /// which builds its schema with EnsureCreated and never applies migrations.
+        /// </summary>
+        public static IEnumerable<string> Statements()
+        {
             var testInvoices = $"SELECT \"Id\" FROM \"Invoices\" WHERE \"CustomerId\" IN ({TestCustomers})";
             var testQuotations = $"SELECT \"Id\" FROM \"Quotations\" WHERE \"CustomerId\" IN ({TestCustomers})";
             var testProformas = $"SELECT \"Id\" FROM \"ProformaInvoices\" WHERE \"CustomerId\" IN ({TestCustomers})";
 
-            migrationBuilder.Sql($"DELETE FROM \"Payments\" WHERE \"InvoiceId\" IN ({testInvoices});");
-            migrationBuilder.Sql($"DELETE FROM \"InvoiceItems\" WHERE \"InvoiceId\" IN ({testInvoices});");
-            migrationBuilder.Sql($"DELETE FROM \"Invoices\" WHERE \"Id\" IN ({testInvoices});");
+            yield return $"DELETE FROM \"Payments\" WHERE \"InvoiceId\" IN ({testInvoices});";
+            yield return $"DELETE FROM \"InvoiceItems\" WHERE \"InvoiceId\" IN ({testInvoices});";
+            yield return $"DELETE FROM \"Invoices\" WHERE \"Id\" IN ({testInvoices});";
 
-            migrationBuilder.Sql($"DELETE FROM \"QuotationItems\" WHERE \"QuotationId\" IN ({testQuotations});");
-            migrationBuilder.Sql($"DELETE FROM \"Quotations\" WHERE \"Id\" IN ({testQuotations});");
+            yield return $"DELETE FROM \"QuotationItems\" WHERE \"QuotationId\" IN ({testQuotations});";
+            yield return $"DELETE FROM \"Quotations\" WHERE \"Id\" IN ({testQuotations});";
 
-            migrationBuilder.Sql($"DELETE FROM \"ProformaInvoiceItems\" WHERE \"ProformaInvoiceId\" IN ({testProformas});");
-            migrationBuilder.Sql($"DELETE FROM \"ProformaInvoices\" WHERE \"Id\" IN ({testProformas});");
+            yield return $"DELETE FROM \"ProformaInvoiceItems\" WHERE \"ProformaInvoiceId\" IN ({testProformas});";
+            yield return $"DELETE FROM \"ProformaInvoices\" WHERE \"Id\" IN ({testProformas});";
 
             // Only remove test items no longer used on any remaining document (FKs cascade to line items).
             var unusedTestItems = $@"SELECT i.""Id"" FROM ""Items"" i WHERE i.""Id"" IN ({TestItems})
                 AND NOT EXISTS (SELECT 1 FROM ""InvoiceItems"" x WHERE x.""ItemId"" = i.""Id"")
                 AND NOT EXISTS (SELECT 1 FROM ""QuotationItems"" x WHERE x.""ItemId"" = i.""Id"")
                 AND NOT EXISTS (SELECT 1 FROM ""ProformaInvoiceItems"" x WHERE x.""ItemId"" = i.""Id"")";
-            migrationBuilder.Sql($"DELETE FROM \"StockTransactions\" WHERE \"ItemId\" IN ({unusedTestItems});");
-            migrationBuilder.Sql($"DELETE FROM \"Items\" WHERE \"Id\" IN ({unusedTestItems});");
+            yield return $"DELETE FROM \"StockTransactions\" WHERE \"ItemId\" IN ({unusedTestItems});";
+            yield return $"DELETE FROM \"Items\" WHERE \"Id\" IN ({unusedTestItems});";
 
-            migrationBuilder.Sql($@"DELETE FROM ""Customers"" WHERE ""Id"" IN ({TestCustomers})
+            yield return $@"DELETE FROM ""Customers"" WHERE ""Id"" IN ({TestCustomers})
                 AND NOT EXISTS (SELECT 1 FROM ""Invoices"" x WHERE x.""CustomerId"" = ""Customers"".""Id"")
                 AND NOT EXISTS (SELECT 1 FROM ""Quotations"" x WHERE x.""CustomerId"" = ""Customers"".""Id"")
-                AND NOT EXISTS (SELECT 1 FROM ""ProformaInvoices"" x WHERE x.""CustomerId"" = ""Customers"".""Id"");");
+                AND NOT EXISTS (SELECT 1 FROM ""ProformaInvoices"" x WHERE x.""CustomerId"" = ""Customers"".""Id"");";
 
             // Restart numbering only when nothing is left that could collide with a reused number.
-            migrationBuilder.Sql("UPDATE \"Companies\" SET \"NextInvoiceNumber\" = 1 WHERE NOT EXISTS (SELECT 1 FROM \"Invoices\");");
-            migrationBuilder.Sql("UPDATE \"Companies\" SET \"NextProformaNumber\" = 1 WHERE NOT EXISTS (SELECT 1 FROM \"ProformaInvoices\");");
+            yield return "UPDATE \"Companies\" SET \"NextInvoiceNumber\" = 1 WHERE NOT EXISTS (SELECT 1 FROM \"Invoices\");";
+            yield return "UPDATE \"Companies\" SET \"NextProformaNumber\" = 1 WHERE NOT EXISTS (SELECT 1 FROM \"ProformaInvoices\");";
         }
 
         /// <inheritdoc />
