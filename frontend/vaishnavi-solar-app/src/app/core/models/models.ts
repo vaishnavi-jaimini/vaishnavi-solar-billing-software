@@ -128,6 +128,11 @@ export interface Invoice {
   shipToCity: string;
   shipToState: string;
   shipToPincode: string;
+  terms: string;
+  dueDate: string;
+  workOrderNo: string;
+  purchaseOrderNo: string;
+  purchaseDate?: string | null;
   subtotal: number;
   cgstAmount: number;
   sgstAmount: number;
@@ -151,6 +156,12 @@ export interface InvoiceUpsert {
   shipToCity?: string;
   shipToState?: string;
   shipToPincode?: string;
+  placeOfSupply?: string;
+  terms?: string;
+  dueDate?: string;
+  workOrderNo?: string;
+  purchaseOrderNo?: string;
+  purchaseDate?: string | null;
   items: LineItemInput[];
 }
 

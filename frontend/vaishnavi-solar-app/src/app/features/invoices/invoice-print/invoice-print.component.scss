@@ -46,14 +46,26 @@
   letter-spacing: 1px;
 }
 
-.invoice-number {
-  font-size: 14px;
-  margin-top: 4px;
-}
-
-.invoice-date {
+.invoice-meta {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
   font-size: 12px;
-  opacity: 0.8;
+
+  table {
+    flex: 1;
+    border-collapse: collapse;
+  }
+
+  td {
+    padding: 2px 0;
+    vertical-align: top;
+  }
+
+  td:first-child {
+    width: 40%;
+    font-weight: 600;
+  }
 }
 
 .parties {

@@ -48,6 +48,12 @@ export class InvoiceFormComponent implements OnInit {
   form: FormGroup = this.fb.group({
     customerId: [null, Validators.required],
     invoiceDate: [new Date()],
+    placeOfSupply: [''],
+    terms: ['Due on Receipt'],
+    dueDate: ['As per Agreement'],
+    workOrderNo: [''],
+    purchaseOrderNo: [''],
+    purchaseDate: [null],
     notes: [''],
     shipSameAsBilling: [true],
     shipToName: [''],
@@ -125,6 +131,10 @@ export class InvoiceFormComponent implements OnInit {
   }
 
   onCustomerSelected(): void {
+    const customer = this.customers.find((c) => c.id === this.form.get('customerId')?.value);
+    if (customer) {
+      this.form.patchValue({ placeOfSupply: customer.state });
+    }
     if (this.form.get('shipSameAsBilling')?.value) {
       this.copyBillingToShipTo();
     }
@@ -182,6 +192,13 @@ export class InvoiceFormComponent implements OnInit {
     return this.subtotal + this.totalGst;
   }
 
+  // Send the picked calendar day as yyyy-MM-dd so the timezone can't shift it to the previous day.
+  private toDateOnly(d: Date | null): string | null {
+    if (!d) return null;
+    const pad = (n: number) => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  }
+
   save(): void {
     if (this.form.invalid || this.lines.length === 0) {
       this.form.markAllAsTouched();
@@ -202,6 +219,12 @@ export class InvoiceFormComponent implements OnInit {
         shipToCity: value.shipToCity,
         shipToState: value.shipToState,
         shipToPincode: value.shipToPincode,
+        placeOfSupply: value.placeOfSupply,
+        terms: value.terms,
+        dueDate: value.dueDate,
+        workOrderNo: value.workOrderNo,
+        purchaseOrderNo: value.purchaseOrderNo,
+        purchaseDate: this.toDateOnly(value.purchaseDate),
         items: value.lines
       })
       .subscribe({

@@ -34,6 +34,11 @@ public class InvoiceDto
     public string ShipToCity { get; set; } = string.Empty;
     public string ShipToState { get; set; } = string.Empty;
     public string ShipToPincode { get; set; } = string.Empty;
+    public string Terms { get; set; } = string.Empty;
+    public string DueDate { get; set; } = string.Empty;
+    public string WorkOrderNo { get; set; } = string.Empty;
+    public string PurchaseOrderNo { get; set; } = string.Empty;
+    public DateTime? PurchaseDate { get; set; }
     public decimal Subtotal { get; set; }
     public decimal CgstAmount { get; set; }
     public decimal SgstAmount { get; set; }
@@ -67,6 +72,12 @@ public class InvoiceUpsertDto
     public string? ShipToCity { get; set; }
     public string? ShipToState { get; set; }
     public string? ShipToPincode { get; set; }
+    public string? PlaceOfSupply { get; set; }
+    public string? Terms { get; set; }
+    public string? DueDate { get; set; }
+    public string? WorkOrderNo { get; set; }
+    public string? PurchaseOrderNo { get; set; }
+    public DateTime? PurchaseDate { get; set; }
     public List<InvoiceItemInputDto> Items { get; set; } = new();
 }
 

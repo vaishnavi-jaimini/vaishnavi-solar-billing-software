@@ -72,7 +72,12 @@ using (var scope = app.Services.CreateScope())
         // EnsureCreated never alters an existing schema, so columns added after the first deploy are patched in here.
         db.Database.ExecuteSqlRaw(
             "ALTER TABLE \"Companies\" ADD COLUMN IF NOT EXISTS \"BankAccountName\" text NOT NULL DEFAULT ''; " +
-            "ALTER TABLE \"Companies\" ADD COLUMN IF NOT EXISTS \"BankBranch\" text NOT NULL DEFAULT '';");
+            "ALTER TABLE \"Companies\" ADD COLUMN IF NOT EXISTS \"BankBranch\" text NOT NULL DEFAULT ''; " +
+            "ALTER TABLE \"Invoices\" ADD COLUMN IF NOT EXISTS \"Terms\" text NOT NULL DEFAULT 'Due on Receipt'; " +
+            "ALTER TABLE \"Invoices\" ADD COLUMN IF NOT EXISTS \"DueDate\" text NOT NULL DEFAULT 'As per Agreement'; " +
+            "ALTER TABLE \"Invoices\" ADD COLUMN IF NOT EXISTS \"WorkOrderNo\" text NOT NULL DEFAULT ''; " +
+            "ALTER TABLE \"Invoices\" ADD COLUMN IF NOT EXISTS \"PurchaseOrderNo\" text NOT NULL DEFAULT ''; " +
+            "ALTER TABLE \"Invoices\" ADD COLUMN IF NOT EXISTS \"PurchaseDate\" timestamp with time zone NULL;");
     }
     else
     {

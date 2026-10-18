@@ -48,16 +48,24 @@ public class InvoiceService
 
         var invoice = new Invoice
         {
-            InvoiceNumber = $"{company.InvoicePrefix}{company.NextInvoiceNumber:D4}",
+            InvoiceNumber = FormatInvoiceNumber(company.InvoicePrefix, company.NextInvoiceNumber),
             InvoiceDate = dto.InvoiceDate,
             CustomerId = dto.CustomerId,
-            PlaceOfSupply = customer.State,
+            PlaceOfSupply = string.IsNullOrWhiteSpace(dto.PlaceOfSupply) ? customer.State : dto.PlaceOfSupply.Trim(),
             IsInterState = interState,
             ShipToName = useBillingAddress ? customer.Name : dto.ShipToName!,
             ShipToAddress = useBillingAddress ? customer.Address : dto.ShipToAddress ?? string.Empty,
             ShipToCity = useBillingAddress ? customer.City : dto.ShipToCity ?? string.Empty,
             ShipToState = useBillingAddress ? customer.State : dto.ShipToState ?? string.Empty,
             ShipToPincode = useBillingAddress ? customer.Pincode : dto.ShipToPincode ?? string.Empty,
+            Terms = string.IsNullOrWhiteSpace(dto.Terms) ? "Due on Receipt" : dto.Terms.Trim(),
+            DueDate = string.IsNullOrWhiteSpace(dto.DueDate) ? "As per Agreement" : dto.DueDate.Trim(),
+            WorkOrderNo = dto.WorkOrderNo?.Trim() ?? string.Empty,
+            PurchaseOrderNo = dto.PurchaseOrderNo?.Trim() ?? string.Empty,
+            // Calendar date only; tagged UTC because PostgreSQL rejects unspecified-kind timestamps.
+            PurchaseDate = dto.PurchaseDate.HasValue
+                ? DateTime.SpecifyKind(dto.PurchaseDate.Value.Date, DateTimeKind.Utc)
+                : null,
             Notes = dto.Notes,
             Status = InvoiceStatus.Unpaid
         };
@@ -129,6 +137,19 @@ public class InvoiceService
 
         await _db.SaveChangesAsync();
         return invoice;
+    }
+
+    // A run of '#' in the prefix marks where the number goes, zero-padded to the run's width
+    // (e.g. "VS/###/2026-27" -> "VS/003/2026-27"); otherwise the number is appended as 4 digits.
+    public static string FormatInvoiceNumber(string prefix, int number)
+    {
+        var match = System.Text.RegularExpressions.Regex.Match(prefix, "#+");
+        if (!match.Success)
+        {
+            return $"{prefix}{number:D4}";
+        }
+        var padded = number.ToString().PadLeft(match.Length, '0');
+        return prefix.Remove(match.Index, match.Length).Insert(match.Index, padded);
     }
 
     public async Task<Invoice> ConvertQuotationToInvoiceAsync(int quotationId)

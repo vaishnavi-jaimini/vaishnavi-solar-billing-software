@@ -9,6 +9,11 @@
     </div>
     <div class="view-meta">
       <div><strong>Date:</strong> {{ inv.invoiceDate | date: 'dd-MMM-yyyy' }}</div>
+      <div><strong>Terms:</strong> {{ inv.terms }}</div>
+      <div><strong>Due Date:</strong> {{ inv.dueDate }}</div>
+      <div><strong>Work Order No:</strong> {{ inv.workOrderNo || '----' }}</div>
+      <div><strong>Purchase Order No:</strong> {{ inv.purchaseOrderNo || '----' }}</div>
+      <div><strong>Purchase Date:</strong> {{ inv.purchaseDate ? (inv.purchaseDate | date: 'dd/MM/yyyy') : '----' }}</div>
     </div>
     <div class="parties-row">
       <div class="party-box">
@@ -97,6 +102,39 @@
         <input matInput [matDatepicker]="datePicker" formControlName="invoiceDate" />
         <mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
         <mat-datepicker #datePicker></mat-datepicker>
+      </mat-form-field>
+    </div>
+
+    <div class="spacer-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Place of Supply</mat-label>
+        <input matInput formControlName="placeOfSupply" placeholder="e.g. Silvassa (D & NH)" />
+        <mat-hint>Defaults to the customer's state</mat-hint>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Terms</mat-label>
+        <input matInput formControlName="terms" />
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Due Date</mat-label>
+        <input matInput formControlName="dueDate" />
+      </mat-form-field>
+    </div>
+
+    <div class="spacer-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Work Order No</mat-label>
+        <input matInput formControlName="workOrderNo" />
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Purchase Order No</mat-label>
+        <input matInput formControlName="purchaseOrderNo" />
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Purchase Date</mat-label>
+        <input matInput [matDatepicker]="purchaseDatePicker" formControlName="purchaseDate" />
+        <mat-datepicker-toggle matSuffix [for]="purchaseDatePicker"></mat-datepicker-toggle>
+        <mat-datepicker #purchaseDatePicker></mat-datepicker>
       </mat-form-field>
     </div>
 

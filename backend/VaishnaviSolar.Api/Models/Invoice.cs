@@ -15,6 +15,11 @@ public class Invoice
     public string ShipToCity { get; set; } = string.Empty;
     public string ShipToState { get; set; } = string.Empty;
     public string ShipToPincode { get; set; } = string.Empty;
+    public string Terms { get; set; } = "Due on Receipt";
+    public string DueDate { get; set; } = "As per Agreement";
+    public string WorkOrderNo { get; set; } = string.Empty;
+    public string PurchaseOrderNo { get; set; } = string.Empty;
+    public DateTime? PurchaseDate { get; set; }
     public decimal Subtotal { get; set; }
     public decimal CgstAmount { get; set; }
     public decimal SgstAmount { get; set; }

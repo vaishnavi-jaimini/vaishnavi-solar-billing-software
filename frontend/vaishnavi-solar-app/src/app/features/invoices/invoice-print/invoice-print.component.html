@@ -16,16 +16,29 @@
         </div>
         <div class="invoice-title-block">
           <div class="invoice-title">TAX INVOICE</div>
-          <div class="invoice-number">{{ invoice.invoiceNumber }}</div>
-          <div class="invoice-date">Date: {{ invoice.invoiceDate | date: 'dd-MMM-yyyy' }}</div>
         </div>
+      </div>
+
+      <div class="invoice-meta">
+        <table>
+          <tr><td>Invoice No</td><td>: {{ invoice.invoiceNumber }}</td></tr>
+          <tr><td>Invoice Date</td><td>: {{ invoice.invoiceDate | date: 'dd/MM/yyyy' }}</td></tr>
+          <tr><td>Terms</td><td>: {{ invoice.terms }}</td></tr>
+          <tr><td>Due Date</td><td>: {{ invoice.dueDate }}</td></tr>
+          <tr><td>GSTIN</td><td>: {{ company.gstin || '----' }}</td></tr>
+        </table>
+        <table>
+          <tr><td>Place of Supply</td><td>: {{ invoice.placeOfSupply }}</td></tr>
+          <tr><td>Work Order No</td><td>: {{ invoice.workOrderNo || '----' }}</td></tr>
+          <tr><td>Purchase Order No</td><td>: {{ invoice.purchaseOrderNo || '----' }}</td></tr>
+          <tr><td>Purchase Date</td><td>: {{ invoice.purchaseDate ? (invoice.purchaseDate | date: 'dd/MM/yyyy') : '----' }}</td></tr>
+        </table>
       </div>
 
       <div class="parties">
         <div class="party-box">
           <div class="party-label">Bill To</div>
           <div class="party-name">{{ invoice.customerName }}</div>
-          <div class="party-detail">Place of Supply: {{ invoice.placeOfSupply }}</div>
           <div class="party-detail">{{ invoice.isInterState ? 'Inter-state (IGST)' : 'Intra-state (CGST + SGST)' }}</div>
         </div>
         <div class="party-box">
