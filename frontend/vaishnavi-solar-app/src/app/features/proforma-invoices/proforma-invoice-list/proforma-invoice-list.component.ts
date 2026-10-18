@@ -18,7 +18,7 @@ import { ProformaInvoice } from '../../../core/models/models';
 })
 export class ProformaInvoiceListComponent implements OnInit {
   proformaInvoices: ProformaInvoice[] = [];
-  columns = ['proformaNumber', 'date', 'customerName', 'grandTotal', 'status', 'actions'];
+  columns = ['proformaNumber', 'date', 'customerName', 'grandTotal', 'actions'];
 
   constructor(
     private proformaService: ProformaInvoiceService,

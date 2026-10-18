@@ -38,7 +38,7 @@ export class ReportsComponent implements OnInit {
   stockRows: StockReportRow[] = [];
   lowOnly = false;
 
-  salesColumns = ['invoiceNumber', 'invoiceDate', 'customerName', 'subtotal', 'totalGst', 'grandTotal', 'status'];
+  salesColumns = ['invoiceNumber', 'invoiceDate', 'customerName', 'subtotal', 'totalGst', 'grandTotal'];
   gstColumns = ['hsnSacCode', 'itemName', 'taxableValue', 'cgstAmount', 'sgstAmount', 'igstAmount', 'totalTax'];
   duesColumns = ['invoiceNumber', 'invoiceDate', 'customerName', 'customerPhone', 'grandTotal', 'amountPaid', 'balance'];
   stockColumns = ['itemName', 'category', 'currentStock', 'lowStockThreshold'];

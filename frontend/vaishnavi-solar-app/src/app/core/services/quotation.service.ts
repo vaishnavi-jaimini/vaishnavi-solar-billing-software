@@ -25,12 +25,6 @@ export class QuotationService {
     return this.http.post<Quotation>(this.base, dto);
   }
 
-  updateStatus(id: number, status: QuotationStatus): Observable<any> {
-    return this.http.put(`${this.base}/${id}/status`, JSON.stringify(status), {
-      headers: { 'Content-Type': 'application/json' }
-    });
-  }
-
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.base}/${id}`);
   }

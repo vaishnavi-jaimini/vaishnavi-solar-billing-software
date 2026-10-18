@@ -9,7 +9,6 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { QuotationService } from '../../../core/services/quotation.service';
 import { InvoiceService } from '../../../core/services/invoice.service';
 import { Quotation } from '../../../core/models/models';
-import { QuotationStatus } from '../../../core/models/enums';
 
 @Component({
   selector: 'app-quotation-list',
@@ -20,8 +19,7 @@ import { QuotationStatus } from '../../../core/models/enums';
 })
 export class QuotationListComponent implements OnInit {
   quotations: Quotation[] = [];
-  columns = ['quotationNumber', 'date', 'customerName', 'grandTotal', 'status', 'actions'];
-  statuses = Object.values(QuotationStatus);
+  columns = ['quotationNumber', 'date', 'customerName', 'grandTotal', 'actions'];
 
   constructor(
     private quotationService: QuotationService,
@@ -35,22 +33,6 @@ export class QuotationListComponent implements OnInit {
 
   load(): void {
     this.quotationService.getAll().subscribe((data) => (this.quotations = data));
-  }
-
-  setStatus(q: Quotation, status: QuotationStatus): void {
-    this.quotationService.updateStatus(q.id, status).subscribe(() => this.load());
-  }
-
-  markSent(q: Quotation): void {
-    this.setStatus(q, QuotationStatus.Sent);
-  }
-
-  markAccepted(q: Quotation): void {
-    this.setStatus(q, QuotationStatus.Accepted);
-  }
-
-  markRejected(q: Quotation): void {
-    this.setStatus(q, QuotationStatus.Rejected);
   }
 
   convert(q: Quotation): void {
@@ -70,9 +52,5 @@ export class QuotationListComponent implements OnInit {
       next: () => this.load(),
       error: (err) => this.snackBar.open(err.error || 'Could not delete quotation', 'Close', { duration: 3000 })
     });
-  }
-
-  statusClass(status: string): string {
-    return `status-chip status-${status.toLowerCase()}`;
   }
 }

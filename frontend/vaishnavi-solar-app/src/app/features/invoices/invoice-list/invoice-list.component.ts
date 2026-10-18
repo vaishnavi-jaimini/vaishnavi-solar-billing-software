@@ -16,15 +16,11 @@ import { Invoice } from '../../../core/models/models';
 })
 export class InvoiceListComponent implements OnInit {
   invoices: Invoice[] = [];
-  columns = ['invoiceNumber', 'date', 'customerName', 'grandTotal', 'balance', 'status', 'actions'];
+  columns = ['invoiceNumber', 'date', 'customerName', 'grandTotal', 'balance', 'actions'];
 
   constructor(private invoiceService: InvoiceService) {}
 
   ngOnInit(): void {
     this.invoiceService.getAll().subscribe((data) => (this.invoices = data));
-  }
-
-  statusClass(status: string): string {
-    return `status-chip status-${status.toLowerCase()}`;
   }
 }
