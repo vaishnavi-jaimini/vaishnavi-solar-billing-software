@@ -33,7 +33,7 @@ export class CustomerFormDialogComponent {
     gstin: [''],
     address: [''],
     city: [''],
-    state: ['Maharashtra', Validators.required],
+    state: ['Gujarat', Validators.required],
     pincode: ['']
   });
 
