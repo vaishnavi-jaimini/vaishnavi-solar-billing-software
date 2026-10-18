@@ -120,6 +120,11 @@ export interface Invoice {
   invoiceDate: string;
   customerId: number;
   customerName: string;
+  customerAddress: string;
+  customerCity: string;
+  customerState: string;
+  customerPincode: string;
+  customerGstin?: string | null;
   quotationId?: number | null;
   placeOfSupply: string;
   isInterState: boolean;

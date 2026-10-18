@@ -19,6 +19,11 @@
       <div class="party-box">
         <div class="party-label">Bill To</div>
         <div class="party-name">{{ inv.customerName }}</div>
+        <div class="party-detail">{{ inv.customerAddress }}</div>
+        <div class="party-detail">{{ inv.customerCity }}, {{ inv.customerState }} @if (inv.customerPincode) { - {{ inv.customerPincode }} }</div>
+        @if (inv.customerGstin) {
+          <div class="party-detail">GSTIN: {{ inv.customerGstin }}</div>
+        }
         <div class="party-detail">Place of Supply: {{ inv.placeOfSupply }}</div>
         <div class="party-detail">{{ inv.isInterState ? 'Inter-state (IGST)' : 'Intra-state (CGST + SGST)' }}</div>
       </div>
