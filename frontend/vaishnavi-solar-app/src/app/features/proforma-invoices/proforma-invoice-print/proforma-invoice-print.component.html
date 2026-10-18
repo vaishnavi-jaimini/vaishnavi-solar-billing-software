@@ -127,9 +127,15 @@
       <div class="footer">
         <div class="bank-details">
           <div class="party-label">Bank Details</div>
+          @if (company.bankAccountName) {
+            <div>A/c Name: {{ company.bankAccountName }}</div>
+          }
           <div>{{ company.bankName }}</div>
           <div>A/c No: {{ company.bankAccountNo }}</div>
           <div>IFSC: {{ company.bankIfsc }}</div>
+          @if (company.bankBranch) {
+            <div>Branch: {{ company.bankBranch }}</div>
+          }
         </div>
         <div class="signature">
           <div class="signature-line">For {{ company.name }}</div>

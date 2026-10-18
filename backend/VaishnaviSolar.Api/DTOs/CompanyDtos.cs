@@ -14,5 +14,7 @@ public class CompanyDto
     public string BankName { get; set; } = string.Empty;
     public string BankAccountNo { get; set; } = string.Empty;
     public string BankIfsc { get; set; } = string.Empty;
+    public string BankAccountName { get; set; } = string.Empty;
+    public string BankBranch { get; set; } = string.Empty;
     public string InvoicePrefix { get; set; } = "INV-";
 }

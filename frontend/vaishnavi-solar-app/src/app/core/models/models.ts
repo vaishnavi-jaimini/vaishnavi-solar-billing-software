@@ -13,6 +13,8 @@ export interface Company {
   bankName: string;
   bankAccountNo: string;
   bankIfsc: string;
+  bankAccountName: string;
+  bankBranch: string;
   invoicePrefix: string;
 }
 

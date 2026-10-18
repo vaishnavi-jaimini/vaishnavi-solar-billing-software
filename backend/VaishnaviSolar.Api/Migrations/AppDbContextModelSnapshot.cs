@@ -34,7 +34,15 @@ namespace VaishnaviSolar.Api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("BankAccountName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("BankAccountNo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BankBranch")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -97,7 +105,9 @@ namespace VaishnaviSolar.Api.Migrations
                         {
                             Id = 1,
                             Address = "",
+                            BankAccountName = "",
                             BankAccountNo = "",
+                            BankBranch = "",
                             BankIfsc = "",
                             BankName = "",
                             City = "",

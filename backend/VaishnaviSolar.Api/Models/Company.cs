@@ -14,6 +14,8 @@ public class Company
     public string BankName { get; set; } = string.Empty;
     public string BankAccountNo { get; set; } = string.Empty;
     public string BankIfsc { get; set; } = string.Empty;
+    public string BankAccountName { get; set; } = string.Empty;
+    public string BankBranch { get; set; } = string.Empty;
     public int NextInvoiceNumber { get; set; } = 1;
     public string InvoicePrefix { get; set; } = "INV-";
     public int NextProformaNumber { get; set; } = 1;

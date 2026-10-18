@@ -48,6 +48,10 @@
   <h3>Bank Details (for invoice footer)</h3>
   <div class="spacer-row">
     <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Company Name (Account Holder)</mat-label>
+      <input matInput formControlName="bankAccountName" />
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
       <mat-label>Bank Name</mat-label>
       <input matInput formControlName="bankName" />
     </mat-form-field>
@@ -58,6 +62,10 @@
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>IFSC</mat-label>
       <input matInput formControlName="bankIfsc" />
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Branch Name</mat-label>
+      <input matInput formControlName="bankBranch" />
     </mat-form-field>
   </div>
 

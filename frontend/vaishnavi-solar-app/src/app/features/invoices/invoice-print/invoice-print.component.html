@@ -121,27 +121,32 @@
         </table>
       </div>
 
-      <div class="declaration">
-        <div class="party-label">Declaration</div>
-        <p>
-          We declare that this Invoice shows the actual price of the goods described and that all particulars are
-          true and correct. Freight Charges will be Extra as per Actuals on TO-PAY Basis. Goods once Sold will not
-          be taken Back or Exchanged. Warranty Void of Solar Inverter if ACDB &amp; DCDB is not Installed at site.
-        </p>
-      </div>
-
       <div class="footer">
         <div class="bank-details">
           <div class="party-label">Bank Details</div>
+          @if (company.bankAccountName) {
+            <div>A/c Name: {{ company.bankAccountName }}</div>
+          }
           <div>{{ company.bankName }}</div>
           <div>A/c No: {{ company.bankAccountNo }}</div>
           <div>IFSC: {{ company.bankIfsc }}</div>
+          @if (company.bankBranch) {
+            <div>Branch: {{ company.bankBranch }}</div>
+          }
         </div>
         <div class="signature">
           <div class="signature-line">For {{ company.name }}</div>
           <div class="signature-space"></div>
           <div>Authorized Signatory</div>
         </div>
+      </div>
+
+      <div class="declaration">
+        <div class="party-label">Declaration</div>
+        <p>We declare that this Invoice shows the actual price of the goods described and that all particulars are true and correct.</p>
+        <p>Freight Charges will be Extra as per Actuals on TO-PAY Basis.</p>
+        <p>Goods once Sold will not be taken Back or Exchanged.</p>
+        <p>Warranty Void of Solar Inverter if ACDB &amp; DCDB is not Installed at site.</p>
       </div>
     </div>
   }

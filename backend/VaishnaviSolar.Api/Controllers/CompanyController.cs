@@ -30,6 +30,8 @@ public class CompanyController : ControllerBase
             BankName = c.BankName,
             BankAccountNo = c.BankAccountNo,
             BankIfsc = c.BankIfsc,
+            BankAccountName = c.BankAccountName,
+            BankBranch = c.BankBranch,
             InvoicePrefix = c.InvoicePrefix
         });
     }
@@ -49,6 +51,8 @@ public class CompanyController : ControllerBase
         c.BankName = dto.BankName;
         c.BankAccountNo = dto.BankAccountNo;
         c.BankIfsc = dto.BankIfsc;
+        c.BankAccountName = dto.BankAccountName;
+        c.BankBranch = dto.BankBranch;
         if (!string.IsNullOrWhiteSpace(dto.InvoicePrefix))
         {
             c.InvoicePrefix = dto.InvoicePrefix;

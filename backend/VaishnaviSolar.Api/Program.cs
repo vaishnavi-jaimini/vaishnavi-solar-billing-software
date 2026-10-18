@@ -69,6 +69,10 @@ using (var scope = app.Services.CreateScope())
     {
         // No Postgres migration set is maintained; build the schema straight from the current model.
         db.Database.EnsureCreated();
+        // EnsureCreated never alters an existing schema, so columns added after the first deploy are patched in here.
+        db.Database.ExecuteSqlRaw(
+            "ALTER TABLE \"Companies\" ADD COLUMN IF NOT EXISTS \"BankAccountName\" text NOT NULL DEFAULT ''; " +
+            "ALTER TABLE \"Companies\" ADD COLUMN IF NOT EXISTS \"BankBranch\" text NOT NULL DEFAULT '';");
     }
     else
     {
