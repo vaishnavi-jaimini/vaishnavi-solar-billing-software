@@ -1,0 +1,159 @@
+<div class="print-toolbar no-print">
+  <a mat-button routerLink="/quotations"><mat-icon>arrow_back</mat-icon> Back</a>
+  <button mat-flat-button color="primary" (click)="print()"><mat-icon>print</mat-icon> Print</button>
+</div>
+
+@if (quotation; as quotation) {
+  @if (company; as company) {
+    <div class="invoice-sheet">
+      <div class="invoice-header">
+        <div>
+          <img class="company-logo" src="/images/vaishnavi-solar-logo.png" alt="{{ company.name }}" />
+          <div class="company-detail">{{ company.address }}</div>
+          <div class="company-detail">{{ company.city }}, {{ company.state }} - {{ company.pincode }}</div>
+          <div class="company-detail">GSTIN: {{ company.gstin || '—' }}</div>
+          <div class="company-detail">Phone: {{ company.phone }} | Email: {{ company.email }}</div>
+        </div>
+        <div class="invoice-title-block">
+          <div class="invoice-title">QUOTATION</div>
+          <div class="not-tax-note">This is not a Tax Invoice</div>
+          <div class="invoice-number">{{ quotation.quotationNumber }}</div>
+          <div class="invoice-date">Date: {{ quotation.date | date: 'dd-MMM-yyyy' }}</div>
+          @if (quotation.validUntil) {
+            <div class="invoice-date">Valid Until: {{ quotation.validUntil | date: 'dd-MMM-yyyy' }}</div>
+          }
+        </div>
+      </div>
+
+      <div class="parties">
+        <div class="party-box">
+          <div class="party-label">Quotation For</div>
+          <div class="party-name">{{ quotation.customerName }}</div>
+          <div class="party-detail">{{ quotation.customerAddress }}</div>
+          <div class="party-detail">{{ quotation.customerCity }}, {{ quotation.customerState }} @if (quotation.customerPincode) { - {{ quotation.customerPincode }} }</div>
+          @if (quotation.customerGstin) {
+            <div class="party-detail">GSTIN: {{ quotation.customerGstin }}</div>
+          }
+        </div>
+        <div class="party-box">
+          <div class="party-label">Tax Details</div>
+          <div class="party-detail">Place of Supply: {{ quotation.placeOfSupply }}</div>
+          <div class="party-detail">{{ quotation.isInterState ? 'Inter-state (IGST)' : 'Intra-state (CGST + SGST)' }}</div>
+        </div>
+      </div>
+
+      <table class="items-table">
+        <colgroup>
+          <col style="width: 4%" />
+          <col style="width: 20%" />
+          <col style="width: 9%" />
+          <col style="width: 7%" />
+          <col style="width: 10%" />
+          <col style="width: 11%" />
+          <col style="width: 12%" />
+          <col style="width: 12%" />
+          <col style="width: 12%" />
+        </colgroup>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Description</th>
+            <th>HSN/SAC</th>
+            <th>Qty</th>
+            <th>Rate</th>
+            <th>Taxable Value</th>
+            <th>CGST</th>
+            <th>SGST</th>
+            <th>IGST</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (line of quotation.items; track line.id; let i = $index) {
+            <tr>
+              <td>{{ i + 1 }}</td>
+              <td>{{ line.description }}</td>
+              <td>{{ line.hsnSacCode }}</td>
+              <td>{{ line.quantity }} {{ line.unit }}</td>
+              <td>₹{{ line.rate | number: '1.2-2' }}</td>
+              <td>₹{{ line.amount | number: '1.2-2' }}</td>
+              <td>
+                @if (line.cgstAmount > 0) { ₹{{ line.cgstAmount | number: '1.2-2' }} ({{ line.gstPercent / 2 }}%) } @else { — }
+              </td>
+              <td>
+                @if (line.sgstAmount > 0) { ₹{{ line.sgstAmount | number: '1.2-2' }} ({{ line.gstPercent / 2 }}%) } @else { — }
+              </td>
+              <td>
+                @if (line.igstAmount > 0) { ₹{{ line.igstAmount | number: '1.2-2' }} ({{ line.gstPercent }}%) } @else { — }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+
+      <div class="summary-block">
+        <div class="amount-words">
+          <div class="party-label">Amount in Words</div>
+          <div>{{ amountInWords(quotation.grandTotal) }}</div>
+          @if (quotation.notes) {
+            <div class="party-label notes-label">Notes</div>
+            <div>{{ quotation.notes }}</div>
+          }
+        </div>
+        <table class="totals-table">
+          <tr>
+            <td>Subtotal</td>
+            <td>₹{{ quotation.subtotal | number: '1.2-2' }}</td>
+          </tr>
+          <tr>
+            <td>CGST</td>
+            <td>₹{{ quotation.cgstAmount | number: '1.2-2' }}</td>
+          </tr>
+          <tr>
+            <td>SGST</td>
+            <td>₹{{ quotation.sgstAmount | number: '1.2-2' }}</td>
+          </tr>
+          <tr>
+            <td>IGST</td>
+            <td>₹{{ quotation.igstAmount | number: '1.2-2' }}</td>
+          </tr>
+          <tr class="grand-row">
+            <td>Grand Total</td>
+            <td>₹{{ quotation.grandTotal | number: '1.2-2' }}</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="footer">
+        <div class="bank-details">
+          <div class="party-label">Bank Details</div>
+          @if (company.bankAccountName) {
+            <div>A/c Name: {{ company.bankAccountName }}</div>
+          }
+          <div>{{ company.bankName }}</div>
+          <div>A/c No: {{ company.bankAccountNo }}</div>
+          <div>IFSC: {{ company.bankIfsc }}</div>
+          @if (company.bankBranch) {
+            <div>Branch: {{ company.bankBranch }}</div>
+          }
+        </div>
+        <div class="signature">
+          <div class="signature-line">For {{ company.name }}</div>
+          <div class="signature-space"></div>
+          <div>Authorized Signatory</div>
+        </div>
+      </div>
+
+      <div class="declaration">
+        <div class="party-label">Terms</div>
+        <p>This quotation is an offer of prices and is not a Tax Invoice.</p>
+        @if (quotation.validUntil) {
+          <p>Prices are valid until {{ quotation.validUntil | date: 'dd-MMM-yyyy' }}.</p>
+        }
+        <p>Freight Charges will be Extra as per Actuals on TO-PAY Basis.</p>
+        <p>Warranty Void of Solar Inverter if ACDB &amp; DCDB is not Installed at site.</p>
+      </div>
+    </div>
+  }
+} @else {
+  <p class="no-print">Loading quotation…</p>
+}

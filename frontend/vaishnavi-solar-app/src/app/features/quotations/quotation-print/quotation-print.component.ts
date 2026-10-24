@@ -1,0 +1,41 @@
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { QuotationService } from '../../../core/services/quotation.service';
+import { CompanyService } from '../../../core/services/company.service';
+import { Company, Quotation } from '../../../core/models/models';
+import { numberToIndianWords } from '../../../core/utils/number-to-words';
+
+@Component({
+  selector: 'app-quotation-print',
+  standalone: true,
+  imports: [CommonModule, RouterLink, MatButtonModule, MatIconModule],
+  templateUrl: './quotation-print.component.html',
+  styleUrl: './quotation-print.component.scss'
+})
+export class QuotationPrintComponent implements OnInit {
+  quotation: Quotation | null = null;
+  company: Company | null = null;
+
+  constructor(
+    private route: ActivatedRoute,
+    private quotationService: QuotationService,
+    private companyService: CompanyService
+  ) {}
+
+  ngOnInit(): void {
+    const id = Number(this.route.snapshot.paramMap.get('id'));
+    this.quotationService.getById(id).subscribe((q) => (this.quotation = q));
+    this.companyService.get().subscribe((c) => (this.company = c));
+  }
+
+  amountInWords(amount: number): string {
+    return numberToIndianWords(amount);
+  }
+
+  print(): void {
+    window.print();
+  }
+}

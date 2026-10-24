@@ -60,6 +60,8 @@ export interface QuotationItem {
   itemId: number;
   itemName: string;
   description: string;
+  hsnSacCode: string;
+  unit: ItemUnit;
   quantity: number;
   rate: number;
   gstPercent: number;
@@ -76,6 +78,11 @@ export interface Quotation {
   validUntil?: string | null;
   customerId: number;
   customerName: string;
+  customerAddress: string;
+  customerCity: string;
+  customerState: string;
+  customerPincode: string;
+  customerGstin?: string | null;
   status: QuotationStatus;
   placeOfSupply: string;
   isInterState: boolean;

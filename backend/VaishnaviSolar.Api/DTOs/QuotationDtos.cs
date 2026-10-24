@@ -8,6 +8,8 @@ public class QuotationItemDto
     public int ItemId { get; set; }
     public string ItemName { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
+    public string HsnSacCode { get; set; } = string.Empty;
+    public ItemUnit Unit { get; set; }
     public decimal Quantity { get; set; }
     public decimal Rate { get; set; }
     public decimal GstPercent { get; set; }
@@ -25,6 +27,11 @@ public class QuotationDto
     public DateTime? ValidUntil { get; set; }
     public int CustomerId { get; set; }
     public string CustomerName { get; set; } = string.Empty;
+    public string CustomerAddress { get; set; } = string.Empty;
+    public string CustomerCity { get; set; } = string.Empty;
+    public string CustomerState { get; set; } = string.Empty;
+    public string CustomerPincode { get; set; } = string.Empty;
+    public string? CustomerGstin { get; set; }
     public QuotationStatus Status { get; set; }
     public string PlaceOfSupply { get; set; } = string.Empty;
     public bool IsInterState { get; set; }

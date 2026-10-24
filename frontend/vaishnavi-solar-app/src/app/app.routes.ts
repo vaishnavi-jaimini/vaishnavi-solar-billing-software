@@ -31,6 +31,11 @@ export const routes: Routes = [
       import('./features/quotations/quotation-form/quotation-form.component').then((m) => m.QuotationFormComponent)
   },
   {
+    path: 'quotations/:id/print',
+    loadComponent: () =>
+      import('./features/quotations/quotation-print/quotation-print.component').then((m) => m.QuotationPrintComponent)
+  },
+  {
     path: 'invoices',
     loadComponent: () =>
       import('./features/invoices/invoice-list/invoice-list.component').then((m) => m.InvoiceListComponent)

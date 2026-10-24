@@ -2,7 +2,10 @@
   @if (viewQuotation; as q) {
     <div class="page-header">
       <h1>Quotation {{ q.quotationNumber }}</h1>
-      <a mat-button routerLink="/quotations"><mat-icon>arrow_back</mat-icon> Back</a>
+      <div>
+        <a mat-stroked-button [routerLink]="['/quotations', q.id, 'print']"><mat-icon>print</mat-icon> Print</a>
+        <a mat-button routerLink="/quotations"><mat-icon>arrow_back</mat-icon> Back</a>
+      </div>
     </div>
     <div class="view-meta">
       <div><strong>Customer:</strong> {{ q.customerName }}</div>

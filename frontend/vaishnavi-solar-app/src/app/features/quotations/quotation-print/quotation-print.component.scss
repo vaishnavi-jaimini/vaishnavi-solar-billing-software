@@ -1,0 +1,209 @@
+.print-toolbar {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.invoice-sheet {
+  background: #fff;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 32px;
+  border: 1px solid #e0e0e0;
+  font-size: 13px;
+  color: #212121;
+}
+
+.invoice-header {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 2px solid #212121;
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+}
+
+.company-logo {
+  display: block;
+  max-height: 56px;
+  max-width: 260px;
+  width: auto;
+  height: auto;
+  margin-bottom: 6px;
+}
+
+.company-detail {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.invoice-title-block {
+  text-align: right;
+}
+
+.invoice-title {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.not-tax-note {
+  font-size: 11px;
+  font-weight: 600;
+  color: #ef6c00;
+  margin-top: 2px;
+}
+
+.invoice-number {
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.invoice-date {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.parties {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.party-box {
+  border: 1px solid #e0e0e0;
+  padding: 10px 14px;
+  border-radius: 4px;
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.party-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  opacity: 0.6;
+  margin-bottom: 4px;
+}
+
+.party-name {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.party-detail {
+  font-size: 12px;
+}
+
+.items-table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  margin-bottom: 16px;
+
+  th, td {
+    border: 1px solid #e0e0e0;
+    padding: 5px 6px;
+    text-align: left;
+    font-size: 11px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+
+  th {
+    background: #f5f5f5;
+  }
+}
+
+.summary-block {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.amount-words {
+  flex: 1;
+  font-size: 12px;
+}
+
+.totals-table {
+  min-width: 260px;
+  border-collapse: collapse;
+
+  td {
+    padding: 4px 8px;
+    font-size: 13px;
+  }
+
+  td:last-child {
+    text-align: right;
+  }
+
+  .grand-row td {
+    font-weight: 700;
+    border-top: 1px solid #212121;
+  }
+}
+
+.notes-label {
+  margin-top: 10px;
+}
+
+.declaration {
+  border-top: 1px solid #e0e0e0;
+  padding-top: 12px;
+  margin-top: 24px;
+
+  p {
+    font-size: 11px;
+    line-height: 1.5;
+    opacity: 0.85;
+    margin: 0;
+  }
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: 32px;
+}
+
+.bank-details {
+  font-size: 12px;
+}
+
+.signature {
+  text-align: center;
+  font-size: 12px;
+}
+
+.signature-space {
+  height: 50px;
+}
+
+@media print {
+  @page {
+    size: A4;
+    margin: 10mm;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .invoice-sheet {
+    border: none;
+    padding: 0;
+    max-width: none;
+    width: 100%;
+  }
+  .items-table {
+    font-size: 10px;
+
+    th, td {
+      padding: 4px 5px;
+    }
+  }
+  .items-table tr {
+    page-break-inside: avoid;
+  }
+}
