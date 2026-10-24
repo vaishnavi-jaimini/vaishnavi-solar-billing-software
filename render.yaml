@@ -6,10 +6,11 @@ services:
     dockerContext: ./backend
     plan: free
     envVars:
-      # Set in the Render dashboard (Internal Database URL of the current Postgres instance).
-      # Not linked via fromDatabase so a replacement database can be swapped in without the blueprint reverting it.
+      # vaishnavi-solar-db (free tier) expired on 2026-10-24; this replacement was created in the dashboard.
       - key: DATABASE_URL
-        sync: false
+        fromDatabase:
+          name: vaishnavi-solar-db-2
+          property: connectionString
       - key: FRONTEND_ORIGIN
         value: https://vaishnavi-solar-app.onrender.com
       - key: ASPNETCORE_ENVIRONMENT
