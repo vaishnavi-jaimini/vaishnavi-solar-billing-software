@@ -10,6 +10,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatTableModule } from '@angular/material/table';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { CompanyService } from '../../../core/services/company.service';
 import { CustomerService } from '../../../core/services/customer.service';
 import { ItemService } from '../../../core/services/item.service';
 import { QuotationService } from '../../../core/services/quotation.service';
@@ -38,7 +39,9 @@ export class QuotationFormComponent implements OnInit {
   viewQuotation: Quotation | null = null;
   customers: Customer[] = [];
   items: Item[] = [];
+  companyState = '';
   saving = false;
+  viewColumns = ['item', 'qty', 'rate', 'gst', 'amount', 'cgst', 'sgst', 'igst', 'total'];
 
   form: FormGroup = this.fb.group({
     customerId: [null, Validators.required],
@@ -54,6 +57,7 @@ export class QuotationFormComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
+    private companyService: CompanyService,
     private customerService: CustomerService,
     private itemService: ItemService,
     private quotationService: QuotationService,
@@ -65,6 +69,7 @@ export class QuotationFormComponent implements OnInit {
   ngOnInit(): void {
     const idParam = this.route.snapshot.paramMap.get('id');
     this.customerService.getAll().subscribe((c) => (this.customers = c));
+    this.companyService.get().subscribe((co) => (this.companyState = co.state));
     this.itemService.getAll(undefined, true).subscribe((i) => (this.items = i));
 
     if (idParam) {
@@ -109,15 +114,53 @@ export class QuotationFormComponent implements OnInit {
   }
 
   lineGst(i: number): number {
-    return (this.lineAmount(i) * (this.lines.at(i).value.gstPercent || 0)) / 100;
+    return Math.round(this.lineAmount(i) * (this.lines.at(i).value.gstPercent || 0)) / 100;
+  }
+
+  // Same rule as the backend: customer in the company's state → CGST + SGST, otherwise IGST.
+  get customerState(): string {
+    const customer = this.customers.find((c) => c.id === this.form.get('customerId')?.value);
+    return customer?.state ?? '';
+  }
+
+  get isInterState(): boolean {
+    return this.customerState.trim().toLowerCase() !== this.companyState.trim().toLowerCase();
+  }
+
+  lineCgst(i: number): number {
+    return this.isInterState ? 0 : Math.round(this.lineGst(i) * 50) / 100;
+  }
+
+  lineSgst(i: number): number {
+    return this.isInterState ? 0 : this.lineGst(i) - this.lineCgst(i);
+  }
+
+  lineIgst(i: number): number {
+    return this.isInterState ? this.lineGst(i) : 0;
+  }
+
+  private sumLines(fn: (i: number) => number): number {
+    return this.lines.controls.reduce((sum, _, i) => sum + fn(i), 0);
   }
 
   get subtotal(): number {
-    return this.lines.controls.reduce((sum, _, i) => sum + this.lineAmount(i), 0);
+    return this.sumLines((i) => this.lineAmount(i));
+  }
+
+  get totalCgst(): number {
+    return this.sumLines((i) => this.lineCgst(i));
+  }
+
+  get totalSgst(): number {
+    return this.sumLines((i) => this.lineSgst(i));
+  }
+
+  get totalIgst(): number {
+    return this.sumLines((i) => this.lineIgst(i));
   }
 
   get totalGst(): number {
-    return this.lines.controls.reduce((sum, _, i) => sum + this.lineGst(i), 0);
+    return this.sumLines((i) => this.lineGst(i));
   }
 
   get grandTotal(): number {

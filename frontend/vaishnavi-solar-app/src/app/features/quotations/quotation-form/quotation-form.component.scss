@@ -41,6 +41,14 @@
 }
 .view-meta {
   display: flex;
+  flex-wrap: wrap;
   gap: 24px;
   margin-bottom: 16px;
+}
+.tax-table {
+  width: 100%;
+}
+.tax-note {
+  font-size: 13px;
+  color: #666;
 }

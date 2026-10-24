@@ -7,8 +7,10 @@
     <div class="view-meta">
       <div><strong>Customer:</strong> {{ q.customerName }}</div>
       <div><strong>Date:</strong> {{ q.date | date: 'dd-MMM-yyyy' }}</div>
+      <div><strong>Place of Supply:</strong> {{ q.placeOfSupply }}</div>
+      <div><strong>Tax:</strong> {{ q.isInterState ? 'IGST (inter-state)' : 'CGST + SGST (intra-state)' }}</div>
     </div>
-    <table mat-table [dataSource]="q.items" class="mat-elevation-z1">
+    <table mat-table [dataSource]="q.items" class="mat-elevation-z1 tax-table">
       <ng-container matColumnDef="item">
         <th mat-header-cell *matHeaderCellDef>Item</th>
         <td mat-cell *matCellDef="let l">{{ l.description }}</td>
@@ -26,15 +28,36 @@
         <td mat-cell *matCellDef="let l">{{ l.gstPercent }}%</td>
       </ng-container>
       <ng-container matColumnDef="amount">
-        <th mat-header-cell *matHeaderCellDef>Amount</th>
+        <th mat-header-cell *matHeaderCellDef>Taxable Value</th>
         <td mat-cell *matCellDef="let l">₹{{ l.amount | number: '1.2-2' }}</td>
       </ng-container>
-      <tr mat-header-row *matHeaderRowDef="['item', 'qty', 'rate', 'gst', 'amount']"></tr>
-      <tr mat-row *matRowDef="let row; columns: ['item', 'qty', 'rate', 'gst', 'amount']"></tr>
+      <ng-container matColumnDef="cgst">
+        <th mat-header-cell *matHeaderCellDef>CGST</th>
+        <td mat-cell *matCellDef="let l">₹{{ l.cgstAmount | number: '1.2-2' }}</td>
+      </ng-container>
+      <ng-container matColumnDef="sgst">
+        <th mat-header-cell *matHeaderCellDef>SGST</th>
+        <td mat-cell *matCellDef="let l">₹{{ l.sgstAmount | number: '1.2-2' }}</td>
+      </ng-container>
+      <ng-container matColumnDef="igst">
+        <th mat-header-cell *matHeaderCellDef>IGST</th>
+        <td mat-cell *matCellDef="let l">₹{{ l.igstAmount | number: '1.2-2' }}</td>
+      </ng-container>
+      <ng-container matColumnDef="total">
+        <th mat-header-cell *matHeaderCellDef>Total</th>
+        <td mat-cell *matCellDef="let l">
+          ₹{{ l.amount + l.cgstAmount + l.sgstAmount + l.igstAmount | number: '1.2-2' }}
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="viewColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: viewColumns"></tr>
     </table>
     <div class="totals">
       <div>Subtotal: ₹{{ q.subtotal | number: '1.2-2' }}</div>
-      <div>GST: ₹{{ q.totalGst | number: '1.2-2' }}</div>
+      <div>CGST: ₹{{ q.cgstAmount | number: '1.2-2' }}</div>
+      <div>SGST: ₹{{ q.sgstAmount | number: '1.2-2' }}</div>
+      <div>IGST: ₹{{ q.igstAmount | number: '1.2-2' }}</div>
+      <div>Total GST: ₹{{ q.totalGst | number: '1.2-2' }}</div>
       <div class="grand">Grand Total: ₹{{ q.grandTotal | number: '1.2-2' }}</div>
     </div>
   }
@@ -108,7 +131,15 @@
 
     <div class="totals">
       <div>Subtotal: ₹{{ subtotal | number: '1.2-2' }}</div>
-      <div>GST: ₹{{ totalGst | number: '1.2-2' }}</div>
+      @if (form.get('customerId')?.value) {
+        <div class="tax-note">
+          {{ isInterState ? 'IGST applies (inter-state: ' + customerState + ')' : 'CGST + SGST apply (intra-state)' }}
+        </div>
+      }
+      <div>CGST: ₹{{ totalCgst | number: '1.2-2' }}</div>
+      <div>SGST: ₹{{ totalSgst | number: '1.2-2' }}</div>
+      <div>IGST: ₹{{ totalIgst | number: '1.2-2' }}</div>
+      <div>Total GST: ₹{{ totalGst | number: '1.2-2' }}</div>
       <div class="grand">Grand Total: ₹{{ grandTotal | number: '1.2-2' }}</div>
     </div>
 

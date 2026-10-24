@@ -20,32 +20,58 @@ public class QuotationsController : ControllerBase
         _quotationService = quotationService;
     }
 
-    private static QuotationDto ToDto(Quotation q) => new()
+    // Quotations don't store a CGST/SGST/IGST split, so it's derived here with the same rule invoices use:
+    // customer state == company state → CGST + SGST (half each), otherwise IGST.
+    private static QuotationDto ToDto(Quotation q, string companyState)
     {
-        Id = q.Id,
-        QuotationNumber = q.QuotationNumber,
-        Date = q.Date,
-        ValidUntil = q.ValidUntil,
-        CustomerId = q.CustomerId,
-        CustomerName = q.Customer?.Name ?? string.Empty,
-        Status = q.Status,
-        Subtotal = q.Subtotal,
-        TotalGst = q.TotalGst,
-        GrandTotal = q.GrandTotal,
-        Notes = q.Notes,
-        ConvertedInvoiceId = q.ConvertedInvoiceId,
-        Items = q.Items.Select(i => new QuotationItemDto
+        var customerState = q.Customer?.State ?? string.Empty;
+        bool interState = !string.Equals(customerState.Trim(), companyState.Trim(), StringComparison.OrdinalIgnoreCase);
+
+        var items = q.Items.Select(i =>
         {
-            Id = i.Id,
-            ItemId = i.ItemId,
-            ItemName = i.Item?.Name ?? string.Empty,
-            Description = i.Description,
-            Quantity = i.Quantity,
-            Rate = i.Rate,
-            GstPercent = i.GstPercent,
-            Amount = i.Amount
-        }).ToList()
-    };
+            decimal gst = Math.Round(i.Amount * i.GstPercent / 100, 2);
+            decimal cgst = interState ? 0 : Math.Round(gst / 2, 2);
+            return new QuotationItemDto
+            {
+                Id = i.Id,
+                ItemId = i.ItemId,
+                ItemName = i.Item?.Name ?? string.Empty,
+                Description = i.Description,
+                Quantity = i.Quantity,
+                Rate = i.Rate,
+                GstPercent = i.GstPercent,
+                CgstAmount = cgst,
+                SgstAmount = interState ? 0 : gst - cgst,
+                IgstAmount = interState ? gst : 0,
+                Amount = i.Amount
+            };
+        }).ToList();
+
+        return new QuotationDto
+        {
+            Id = q.Id,
+            QuotationNumber = q.QuotationNumber,
+            Date = q.Date,
+            ValidUntil = q.ValidUntil,
+            CustomerId = q.CustomerId,
+            CustomerName = q.Customer?.Name ?? string.Empty,
+            Status = q.Status,
+            PlaceOfSupply = customerState,
+            IsInterState = interState,
+            Subtotal = q.Subtotal,
+            CgstAmount = items.Sum(i => i.CgstAmount),
+            SgstAmount = items.Sum(i => i.SgstAmount),
+            IgstAmount = items.Sum(i => i.IgstAmount),
+            TotalGst = q.TotalGst,
+            GrandTotal = q.GrandTotal,
+            Notes = q.Notes,
+            ConvertedInvoiceId = q.ConvertedInvoiceId,
+            Items = items
+        };
+    }
+
+    private async Task<string> GetCompanyStateAsync() =>
+        (await _db.Companies.FirstOrDefaultAsync())?.State ?? string.Empty;
 
     [HttpGet]
     public async Task<ActionResult<List<QuotationDto>>> GetAll([FromQuery] QuotationStatus? status)
@@ -53,7 +79,8 @@ public class QuotationsController : ControllerBase
         var query = _db.Quotations.Include(q => q.Customer).Include(q => q.Items).ThenInclude(i => i.Item).AsQueryable();
         if (status.HasValue) query = query.Where(q => q.Status == status);
         var list = await query.OrderByDescending(q => q.Date).ToListAsync();
-        return Ok(list.Select(ToDto));
+        var companyState = await GetCompanyStateAsync();
+        return Ok(list.Select(q => ToDto(q, companyState)));
     }
 
     [HttpGet("{id}")]
@@ -62,7 +89,7 @@ public class QuotationsController : ControllerBase
         var q = await _db.Quotations.Include(x => x.Customer).Include(x => x.Items).ThenInclude(i => i.Item)
             .FirstOrDefaultAsync(x => x.Id == id);
         if (q == null) return NotFound();
-        return Ok(ToDto(q));
+        return Ok(ToDto(q, await GetCompanyStateAsync()));
     }
 
     [HttpPost]

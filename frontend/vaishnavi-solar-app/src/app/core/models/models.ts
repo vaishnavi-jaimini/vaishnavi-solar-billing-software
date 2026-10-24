@@ -63,6 +63,9 @@ export interface QuotationItem {
   quantity: number;
   rate: number;
   gstPercent: number;
+  cgstAmount: number;
+  sgstAmount: number;
+  igstAmount: number;
   amount: number;
 }
 
@@ -74,7 +77,12 @@ export interface Quotation {
   customerId: number;
   customerName: string;
   status: QuotationStatus;
+  placeOfSupply: string;
+  isInterState: boolean;
   subtotal: number;
+  cgstAmount: number;
+  sgstAmount: number;
+  igstAmount: number;
   totalGst: number;
   grandTotal: number;
   notes?: string;

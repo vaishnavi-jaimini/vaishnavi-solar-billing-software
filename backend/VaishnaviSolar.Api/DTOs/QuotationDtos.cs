@@ -11,6 +11,9 @@ public class QuotationItemDto
     public decimal Quantity { get; set; }
     public decimal Rate { get; set; }
     public decimal GstPercent { get; set; }
+    public decimal CgstAmount { get; set; }
+    public decimal SgstAmount { get; set; }
+    public decimal IgstAmount { get; set; }
     public decimal Amount { get; set; }
 }
 
@@ -23,7 +26,12 @@ public class QuotationDto
     public int CustomerId { get; set; }
     public string CustomerName { get; set; } = string.Empty;
     public QuotationStatus Status { get; set; }
+    public string PlaceOfSupply { get; set; } = string.Empty;
+    public bool IsInterState { get; set; }
     public decimal Subtotal { get; set; }
+    public decimal CgstAmount { get; set; }
+    public decimal SgstAmount { get; set; }
+    public decimal IgstAmount { get; set; }
     public decimal TotalGst { get; set; }
     public decimal GrandTotal { get; set; }
     public string? Notes { get; set; }
