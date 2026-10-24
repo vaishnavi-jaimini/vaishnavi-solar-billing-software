@@ -67,6 +67,8 @@ using (var scope = app.Services.CreateScope())
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     if (usePostgres)
     {
+        // Log only the host (never credentials) so a stale or mistyped DATABASE_URL is easy to spot in Render's logs.
+        app.Logger.LogInformation("Connecting to PostgreSQL host {Host}", new Uri(databaseUrl!).Host);
         // No Postgres migration set is maintained; build the schema straight from the current model.
         db.Database.EnsureCreated();
         // EnsureCreated never alters an existing schema, so columns added after the first deploy are patched in here.
