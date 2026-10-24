@@ -9,7 +9,7 @@
       <div class="invoice-header">
         <div>
           <img class="company-logo" src="/images/vaishnavi-solar-logo.png" alt="{{ company.name }}" />
-          <div class="company-detail">{{ company.address }}</div>
+          <div class="company-detail address-lines">{{ company.address }}</div>
           <div class="company-detail">{{ company.city }}, {{ company.state }} - {{ company.pincode }}</div>
           <div class="company-detail">GSTIN: {{ company.gstin || '—' }}</div>
           <div class="company-detail">Phone: {{ company.phone }} | Email: {{ company.email }}</div>
@@ -29,7 +29,7 @@
         <div class="party-box">
           <div class="party-label">Quotation For</div>
           <div class="party-name">{{ quotation.customerName }}</div>
-          <div class="party-detail">{{ quotation.customerAddress }}</div>
+          <div class="party-detail address-lines">{{ quotation.customerAddress }}</div>
           <div class="party-detail">{{ quotation.customerCity }}, {{ quotation.customerState }} @if (quotation.customerPincode) { - {{ quotation.customerPincode }} }</div>
           @if (quotation.customerGstin) {
             <div class="party-detail">GSTIN: {{ quotation.customerGstin }}</div>

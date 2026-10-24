@@ -9,7 +9,7 @@
       <div class="invoice-header">
         <div>
           <img class="company-logo" src="/images/vaishnavi-solar-logo.png" alt="{{ company.name }}" />
-          <div class="company-detail">{{ company.address }}</div>
+          <div class="company-detail address-lines">{{ company.address }}</div>
           <div class="company-detail">{{ company.city }}, {{ company.state }} - {{ company.pincode }}</div>
           <div class="company-detail">GSTIN: {{ company.gstin || '—' }}</div>
           <div class="company-detail">Phone: {{ company.phone }} | Email: {{ company.email }}</div>
@@ -32,7 +32,7 @@
         <div class="party-box">
           <div class="party-label">Ship To</div>
           <div class="party-name">{{ proforma.shipToName }}</div>
-          <div class="party-detail">{{ proforma.shipToAddress }}</div>
+          <div class="party-detail address-lines">{{ proforma.shipToAddress }}</div>
           <div class="party-detail">{{ proforma.shipToCity }}, {{ proforma.shipToState }} @if (proforma.shipToPincode) { - {{ proforma.shipToPincode }} }</div>
         </div>
       </div>

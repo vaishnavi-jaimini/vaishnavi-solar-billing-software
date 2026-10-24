@@ -9,7 +9,7 @@
       <div class="invoice-header">
         <div>
           <img class="company-logo" src="/images/vaishnavi-solar-logo.png" alt="{{ company.name }}" />
-          <div class="company-detail">{{ company.address }}</div>
+          <div class="company-detail address-lines">{{ company.address }}</div>
           <div class="company-detail">{{ company.city }}, {{ company.state }} - {{ company.pincode }}</div>
           <div class="company-detail">GSTIN: {{ company.gstin || '—' }}</div>
           <div class="company-detail">Phone: {{ company.phone }} | Email: {{ company.email }}</div>
@@ -39,7 +39,7 @@
         <div class="party-box">
           <div class="party-label">Bill To</div>
           <div class="party-name">{{ invoice.customerName }}</div>
-          <div class="party-detail">{{ invoice.customerAddress }}</div>
+          <div class="party-detail address-lines">{{ invoice.customerAddress }}</div>
           <div class="party-detail">{{ invoice.customerCity }}, {{ invoice.customerState }} @if (invoice.customerPincode) { - {{ invoice.customerPincode }} }</div>
           @if (invoice.customerGstin) {
             <div class="party-detail">GSTIN: {{ invoice.customerGstin }}</div>
@@ -49,7 +49,7 @@
         <div class="party-box">
           <div class="party-label">Ship To</div>
           <div class="party-name">{{ invoice.shipToName }}</div>
-          <div class="party-detail">{{ invoice.shipToAddress }}</div>
+          <div class="party-detail address-lines">{{ invoice.shipToAddress }}</div>
           <div class="party-detail">{{ invoice.shipToCity }}, {{ invoice.shipToState }} @if (invoice.shipToPincode) { - {{ invoice.shipToPincode }} }</div>
         </div>
       </div>
