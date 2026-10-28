@@ -46,6 +46,8 @@ public class ProformaInvoiceDto
 
 public class ProformaInvoiceUpsertDto
 {
+    // Only used when editing; new proforma invoices are numbered from the company's proforma format.
+    public string? ProformaNumber { get; set; }
     public int CustomerId { get; set; }
     public DateTime ProformaDate { get; set; } = DateTime.UtcNow;
     public string? Notes { get; set; }

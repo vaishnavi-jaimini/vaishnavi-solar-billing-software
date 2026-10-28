@@ -49,6 +49,7 @@ export class ProformaInvoiceFormComponent implements OnInit {
   saving = false;
 
   form: FormGroup = this.fb.group({
+    proformaNumber: [''],
     customerId: [null, Validators.required],
     proformaDate: [new Date()],
     notes: [''],
@@ -119,7 +120,9 @@ export class ProformaInvoiceFormComponent implements OnInit {
       p.shipToCity === customer.city &&
       p.shipToState === customer.state &&
       p.shipToPincode === customer.pincode;
+    this.form.get('proformaNumber')?.setValidators(Validators.required);
     this.form.patchValue({
+      proformaNumber: p.proformaNumber,
       customerId: p.customerId,
       proformaDate: new Date(p.proformaDate),
       notes: p.notes ?? '',
@@ -259,6 +262,7 @@ export class ProformaInvoiceFormComponent implements OnInit {
     const value = this.form.getRawValue();
     const proformaDate = value.proformaDate || new Date();
     const dto = {
+        proformaNumber: this.editId ? value.proformaNumber : undefined,
         customerId: value.customerId,
         proformaDate,
         notes: value.notes,

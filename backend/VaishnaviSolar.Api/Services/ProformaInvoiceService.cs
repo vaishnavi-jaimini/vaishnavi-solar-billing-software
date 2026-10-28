@@ -38,7 +38,15 @@ public class ProformaInvoiceService
             throw new InvalidOperationException("Cannot edit a proforma invoice already converted to an invoice.");
         var company = await _db.Companies.FirstAsync();
 
-        // Lines are replaced wholesale; the proforma number stays the same.
+        var number = dto.ProformaNumber?.Trim();
+        if (!string.IsNullOrEmpty(number) && number != proforma.ProformaNumber)
+        {
+            if (await _db.ProformaInvoices.AnyAsync(p => p.Id != id && p.ProformaNumber == number))
+                throw new InvalidOperationException($"Proforma invoice number {number} is already used by another proforma invoice.");
+            proforma.ProformaNumber = number;
+        }
+
+        // Lines are replaced wholesale.
         _db.ProformaInvoiceItems.RemoveRange(proforma.Items);
         proforma.Items.Clear();
         await ApplyDetailsAsync(proforma, dto, company);

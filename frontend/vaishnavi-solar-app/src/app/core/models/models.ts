@@ -233,6 +233,7 @@ export interface ProformaInvoice {
 }
 
 export interface ProformaInvoiceUpsert {
+  proformaNumber?: string;
   customerId: number;
   proformaDate: string;
   notes?: string;
