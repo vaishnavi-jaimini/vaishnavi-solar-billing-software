@@ -19,10 +19,10 @@ public class QuotationService
         _ = await _db.Customers.FindAsync(dto.CustomerId)
             ?? throw new InvalidOperationException("Customer not found");
 
-        int count = await _db.Quotations.CountAsync();
+        var company = await _db.Companies.FirstAsync();
         var quotation = new Quotation
         {
-            QuotationNumber = $"QTN-{count + 1:D4}",
+            QuotationNumber = InvoiceService.FormatInvoiceNumber(company.QuotationPrefix, company.NextQuotationNumber),
             Date = dto.Date,
             ValidUntil = dto.ValidUntil,
             CustomerId = dto.CustomerId,
@@ -34,6 +34,7 @@ public class QuotationService
         await ApplyLinesAsync(quotation, dto.Items);
 
         _db.Quotations.Add(quotation);
+        company.NextQuotationNumber += 1;
         await _db.SaveChangesAsync();
         return quotation;
     }

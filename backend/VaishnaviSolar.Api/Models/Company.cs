@@ -20,4 +20,6 @@ public class Company
     public string InvoicePrefix { get; set; } = "INV-";
     public int NextProformaNumber { get; set; } = 1;
     public string ProformaPrefix { get; set; } = "PRO-";
+    public int NextQuotationNumber { get; set; } = 1;
+    public string QuotationPrefix { get; set; } = "VS/SL###/2026-27";
 }

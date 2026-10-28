@@ -80,6 +80,9 @@ namespace VaishnaviSolar.Api.Migrations
                     b.Property<int>("NextProformaNumber")
                         .HasColumnType("int");
 
+                    b.Property<int>("NextQuotationNumber")
+                        .HasColumnType("int");
+
                     b.Property<string>("Phone")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -89,6 +92,10 @@ namespace VaishnaviSolar.Api.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ProformaPrefix")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("QuotationPrefix")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -117,9 +124,11 @@ namespace VaishnaviSolar.Api.Migrations
                             Name = "Vaishnavi Solar",
                             NextInvoiceNumber = 1,
                             NextProformaNumber = 1,
+                            NextQuotationNumber = 1,
                             Phone = "",
                             Pincode = "",
                             ProformaPrefix = "PRO-",
+                            QuotationPrefix = "VS/SL###/2026-27",
                             State = "Maharashtra"
                         });
                 });

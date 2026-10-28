@@ -80,7 +80,14 @@ using (var scope = app.Services.CreateScope())
             "ALTER TABLE \"Invoices\" ADD COLUMN IF NOT EXISTS \"WorkOrderNo\" text NOT NULL DEFAULT ''; " +
             "ALTER TABLE \"Invoices\" ADD COLUMN IF NOT EXISTS \"PurchaseOrderNo\" text NOT NULL DEFAULT ''; " +
             "ALTER TABLE \"Invoices\" ADD COLUMN IF NOT EXISTS \"PurchaseDate\" timestamp with time zone NULL; " +
-            "ALTER TABLE \"Quotations\" ADD COLUMN IF NOT EXISTS \"TermsAndConditions\" text NOT NULL DEFAULT '';");
+            "ALTER TABLE \"Quotations\" ADD COLUMN IF NOT EXISTS \"TermsAndConditions\" text NOT NULL DEFAULT ''; " +
+            "ALTER TABLE \"Companies\" ADD COLUMN IF NOT EXISTS \"QuotationPrefix\" text NOT NULL DEFAULT 'VS/SL###/2026-27'; " +
+            // The quotation counter continues after the quotations already saved, so it is only seeded when first added.
+            "DO $$ BEGIN " +
+            "IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'Companies' AND column_name = 'NextQuotationNumber') THEN " +
+            "ALTER TABLE \"Companies\" ADD COLUMN \"NextQuotationNumber\" integer NOT NULL DEFAULT 1; " +
+            "UPDATE \"Companies\" SET \"NextQuotationNumber\" = (SELECT COUNT(*) FROM \"Quotations\") + 1; " +
+            "END IF; END $$;");
     }
     else
     {

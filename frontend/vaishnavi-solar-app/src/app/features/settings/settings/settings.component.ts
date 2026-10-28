@@ -35,7 +35,9 @@ export class SettingsComponent implements OnInit {
     bankIfsc: [''],
     bankAccountName: [''],
     bankBranch: [''],
-    invoicePrefix: ['INV-', Validators.required]
+    invoicePrefix: ['INV-', Validators.required],
+    quotationPrefix: ['VS/SL###/2026-27', Validators.required],
+    nextQuotationNumber: [1, [Validators.required, Validators.min(1)]]
   });
 
   constructor(
