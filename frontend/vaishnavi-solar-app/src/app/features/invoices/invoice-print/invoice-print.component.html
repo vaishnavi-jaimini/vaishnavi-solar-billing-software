@@ -165,6 +165,10 @@
         <p>Freight Charges will be Extra as per Actuals on TO-PAY Basis.</p>
         <p>Goods once Sold will not be taken Back or Exchanged.</p>
         <p>Warranty Void of Solar Inverter if ACDB &amp; DCDB is not Installed at site.</p>
+        @if (invoice.notes) {
+          <div class="party-label notes-label">Notes</div>
+          <p>{{ invoice.notes }}</p>
+        }
       </div>
     </div>
   }
