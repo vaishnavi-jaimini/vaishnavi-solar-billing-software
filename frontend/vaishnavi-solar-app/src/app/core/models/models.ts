@@ -109,6 +109,7 @@ export interface LineItemInput {
 }
 
 export interface QuotationUpsert {
+  quotationNumber?: string;
   customerId: number;
   date: string;
   validUntil?: string | null;

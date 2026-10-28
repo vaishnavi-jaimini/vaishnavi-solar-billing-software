@@ -48,6 +48,14 @@ public class QuotationService
         _ = await _db.Customers.FindAsync(dto.CustomerId)
             ?? throw new InvalidOperationException("Customer not found");
 
+        var number = dto.QuotationNumber?.Trim();
+        if (!string.IsNullOrEmpty(number) && number != quotation.QuotationNumber)
+        {
+            if (await _db.Quotations.AnyAsync(q => q.Id != id && q.QuotationNumber == number))
+                throw new InvalidOperationException($"Quotation number {number} is already used by another quotation.");
+            quotation.QuotationNumber = number;
+        }
+
         quotation.Date = dto.Date;
         quotation.ValidUntil = dto.ValidUntil;
         quotation.CustomerId = dto.CustomerId;

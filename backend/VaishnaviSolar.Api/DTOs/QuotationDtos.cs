@@ -58,6 +58,8 @@ public class QuotationItemInputDto
 
 public class QuotationUpsertDto
 {
+    // Only used when editing; new quotations are numbered from the company's quotation format.
+    public string? QuotationNumber { get; set; }
     public int CustomerId { get; set; }
     public DateTime Date { get; set; } = DateTime.UtcNow;
     public DateTime? ValidUntil { get; set; }

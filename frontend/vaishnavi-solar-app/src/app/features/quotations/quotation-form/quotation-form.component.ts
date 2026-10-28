@@ -47,6 +47,7 @@ export class QuotationFormComponent implements OnInit {
   viewColumns = ['item', 'qty', 'rate', 'gst', 'amount', 'cgst', 'sgst', 'igst', 'total'];
 
   form: FormGroup = this.fb.group({
+    quotationNumber: [''],
     customerId: [null, Validators.required],
     date: [new Date(), Validators.required],
     validUntil: [null],
@@ -96,7 +97,9 @@ export class QuotationFormComponent implements OnInit {
       return;
     }
     this.editNumber = q.quotationNumber;
+    this.form.get('quotationNumber')?.setValidators(Validators.required);
     this.form.patchValue({
+      quotationNumber: q.quotationNumber,
       customerId: q.customerId,
       date: new Date(q.date),
       validUntil: q.validUntil ? new Date(q.validUntil) : null,
@@ -211,6 +214,7 @@ export class QuotationFormComponent implements OnInit {
     this.saving = true;
     const value = this.form.getRawValue();
     const dto = {
+      quotationNumber: this.editId ? value.quotationNumber : undefined,
       customerId: value.customerId,
       date: value.date,
       validUntil: value.validUntil,
