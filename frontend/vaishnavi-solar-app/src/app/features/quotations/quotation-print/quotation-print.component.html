@@ -94,10 +94,6 @@
         <div class="amount-words">
           <div class="party-label">Amount in Words</div>
           <div>{{ amountInWords(quotation.grandTotal) }}</div>
-          @if (quotation.notes) {
-            <div class="party-label notes-label">Notes</div>
-            <div>{{ quotation.notes }}</div>
-          }
         </div>
         <table class="totals-table">
           <tr>
@@ -151,6 +147,10 @@
         }
         <p>Freight Charges will be Extra as per Actuals on TO-PAY Basis.</p>
         <p>Warranty Void of Solar Inverter if ACDB &amp; DCDB is not Installed at site.</p>
+        @if (quotation.notes) {
+          <div class="party-label notes-label">Notes</div>
+          <div>{{ quotation.notes }}</div>
+        }
       </div>
     </div>
   }
