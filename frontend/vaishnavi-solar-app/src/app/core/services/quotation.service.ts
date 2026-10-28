@@ -25,6 +25,10 @@ export class QuotationService {
     return this.http.post<Quotation>(this.base, dto);
   }
 
+  update(id: number, dto: QuotationUpsert): Observable<Quotation> {
+    return this.http.put<Quotation>(`${this.base}/${id}`, dto);
+  }
+
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.base}/${id}`);
   }

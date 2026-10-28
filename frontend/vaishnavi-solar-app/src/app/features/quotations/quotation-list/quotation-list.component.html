@@ -30,6 +30,7 @@
       <button mat-icon-button [matMenuTriggerFor]="menu"><mat-icon>more_vert</mat-icon></button>
       <mat-menu #menu="matMenu">
         @if (q.status !== 'Converted') {
+          <a mat-menu-item [routerLink]="['/quotations', q.id, 'edit']">Edit</a>
           <button mat-menu-item (click)="convert(q)">Convert to Invoice</button>
           <button mat-menu-item (click)="delete(q)">Delete</button>
         } @else {

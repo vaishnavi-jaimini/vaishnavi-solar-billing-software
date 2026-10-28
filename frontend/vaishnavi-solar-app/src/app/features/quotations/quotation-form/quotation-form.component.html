@@ -3,6 +3,9 @@
     <div class="page-header">
       <h1>Quotation {{ q.quotationNumber }}</h1>
       <div>
+        @if (q.status !== 'Converted') {
+          <a mat-stroked-button [routerLink]="['/quotations', q.id, 'edit']"><mat-icon>edit</mat-icon> Edit</a>
+        }
         <a mat-stroked-button [routerLink]="['/quotations', q.id, 'print']"><mat-icon>print</mat-icon> Print</a>
         <a mat-button routerLink="/quotations"><mat-icon>arrow_back</mat-icon> Back</a>
       </div>
@@ -66,7 +69,7 @@
   }
 } @else {
   <div class="page-header">
-    <h1>New Quotation</h1>
+    <h1>{{ editId ? 'Edit Quotation ' + editNumber : 'New Quotation' }}</h1>
     <a mat-button routerLink="/quotations"><mat-icon>arrow_back</mat-icon> Back</a>
   </div>
 
@@ -147,7 +150,7 @@
     </div>
 
     <button mat-flat-button color="primary" type="button" [disabled]="saving" (click)="save()">
-      Save Quotation
+      {{ editId ? 'Update Quotation' : 'Save Quotation' }}
     </button>
   </form>
 }

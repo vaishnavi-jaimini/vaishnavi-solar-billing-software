@@ -36,6 +36,8 @@ import { Customer, Item, Quotation } from '../../../core/models/models';
 })
 export class QuotationFormComponent implements OnInit {
   viewMode = false;
+  editId: number | null = null;
+  editNumber = '';
   viewQuotation: Quotation | null = null;
   customers: Customer[] = [];
   items: Item[] = [];
@@ -72,11 +74,41 @@ export class QuotationFormComponent implements OnInit {
     this.companyService.get().subscribe((co) => (this.companyState = co.state));
     this.itemService.getAll(undefined, true).subscribe((i) => (this.items = i));
 
-    if (idParam) {
+    if (idParam && this.route.snapshot.url.some((s) => s.path === 'edit')) {
+      this.editId = Number(idParam);
+      this.quotationService.getById(this.editId).subscribe((q) => this.loadForEdit(q));
+    } else if (idParam) {
       this.viewMode = true;
       this.quotationService.getById(Number(idParam)).subscribe((q) => (this.viewQuotation = q));
     } else {
       this.addLine();
+    }
+  }
+
+  private loadForEdit(q: Quotation): void {
+    if (q.status === 'Converted') {
+      this.snackBar.open('This quotation is already converted to an invoice and cannot be edited.', 'Close', {
+        duration: 3000
+      });
+      this.router.navigate(['/quotations', q.id]);
+      return;
+    }
+    this.editNumber = q.quotationNumber;
+    this.form.patchValue({
+      customerId: q.customerId,
+      date: new Date(q.date),
+      validUntil: q.validUntil ? new Date(q.validUntil) : null,
+      notes: q.notes ?? ''
+    });
+    for (const l of q.items) {
+      this.addLine();
+      this.lines.at(this.lines.length - 1).patchValue({
+        itemId: l.itemId,
+        description: l.description,
+        quantity: l.quantity,
+        rate: l.rate,
+        gstPercent: l.gstPercent
+      });
     }
   }
 
@@ -175,23 +207,25 @@ export class QuotationFormComponent implements OnInit {
     }
     this.saving = true;
     const value = this.form.getRawValue();
-    this.quotationService
-      .create({
-        customerId: value.customerId,
-        date: value.date,
-        validUntil: value.validUntil,
-        notes: value.notes,
-        items: value.lines
-      })
-      .subscribe({
-        next: (q) => {
-          this.snackBar.open(`Quotation ${q.quotationNumber} created`, 'Close', { duration: 3000 });
-          this.router.navigate(['/quotations']);
-        },
-        error: (err) => {
-          this.saving = false;
-          this.snackBar.open(err.error || 'Could not create quotation', 'Close', { duration: 3000 });
-        }
-      });
+    const dto = {
+      customerId: value.customerId,
+      date: value.date,
+      validUntil: value.validUntil,
+      notes: value.notes,
+      items: value.lines
+    };
+    const request = this.editId ? this.quotationService.update(this.editId, dto) : this.quotationService.create(dto);
+    request.subscribe({
+      next: (q) => {
+        this.snackBar.open(`Quotation ${q.quotationNumber} ${this.editId ? 'updated' : 'created'}`, 'Close', {
+          duration: 3000
+        });
+        this.router.navigate(['/quotations']);
+      },
+      error: (err) => {
+        this.saving = false;
+        this.snackBar.open(err.error || 'Could not save quotation', 'Close', { duration: 3000 });
+      }
+    });
   }
 }

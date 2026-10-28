@@ -113,6 +113,24 @@ public class QuotationsController : ControllerBase
         }
     }
 
+    [HttpPut("{id}")]
+    public async Task<ActionResult<QuotationDto>> Update(int id, QuotationUpsertDto dto)
+    {
+        try
+        {
+            await _quotationService.UpdateQuotationAsync(id, dto);
+            return await GetById(id);
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
     [HttpPut("{id}/status")]
     public async Task<IActionResult> UpdateStatus(int id, [FromBody] QuotationStatus status)
     {
