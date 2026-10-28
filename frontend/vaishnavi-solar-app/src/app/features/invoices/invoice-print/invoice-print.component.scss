@@ -193,16 +193,21 @@
 }
 
 @media print {
+  // A zero page margin stops the browser printing its own date/time and page-title header and footer;
+  // the sheet's padding provides the margin instead, repeated on every page.
   @page {
     size: A4;
-    margin: 10mm;
+    margin: 0;
   }
   .no-print {
     display: none !important;
   }
   .invoice-sheet {
     border: none;
-    padding: 0;
+    padding: 10mm;
+    box-sizing: border-box;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
     max-width: none;
     width: 100%;
   }
