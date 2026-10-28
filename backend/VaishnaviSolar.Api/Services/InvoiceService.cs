@@ -40,35 +40,82 @@ public class InvoiceService
     public async Task<Invoice> CreateInvoiceAsync(InvoiceUpsertDto dto)
     {
         var company = await _db.Companies.FirstAsync();
+        var invoice = new Invoice
+        {
+            InvoiceNumber = FormatInvoiceNumber(company.InvoicePrefix, company.NextInvoiceNumber),
+            Status = InvoiceStatus.Unpaid
+        };
+        await ApplyDetailsAsync(invoice, dto, company);
+
+        _db.Invoices.Add(invoice);
+        company.NextInvoiceNumber += 1;
+
+        await _db.SaveChangesAsync();
+        return invoice;
+    }
+
+    // Editing keeps the invoice number and its payments. Stock from the old lines is put back before
+    // the new lines are deducted, and the paid status is recalculated against the new total.
+    public async Task<Invoice> UpdateInvoiceAsync(int id, InvoiceUpsertDto dto)
+    {
+        var invoice = await _db.Invoices.Include(i => i.Items).ThenInclude(l => l.Item)
+            .FirstOrDefaultAsync(i => i.Id == id)
+            ?? throw new KeyNotFoundException("Invoice not found");
+        var company = await _db.Companies.FirstAsync();
+
+        foreach (var line in invoice.Items)
+        {
+            if (line.Item != null && !line.Item.IsService)
+            {
+                line.Item.CurrentStock += line.Quantity;
+                _db.StockTransactions.Add(new StockTransaction
+                {
+                    ItemId = line.ItemId,
+                    Date = DateTime.UtcNow,
+                    Type = StockTransactionType.Adjustment,
+                    Quantity = line.Quantity,
+                    ReferenceType = "Invoice",
+                    ReferenceId = invoice.Id,
+                    Notes = $"Returned to stock on editing {invoice.InvoiceNumber}"
+                });
+            }
+        }
+        _db.InvoiceItems.RemoveRange(invoice.Items);
+        invoice.Items.Clear();
+
+        await ApplyDetailsAsync(invoice, dto, company);
+        await _db.SaveChangesAsync();
+        await ApplyPaymentAsync(invoice);
+        return invoice;
+    }
+
+    // Fills the header fields and lines from the form, deducting stock for each non-service line.
+    private async Task ApplyDetailsAsync(Invoice invoice, InvoiceUpsertDto dto, Company company)
+    {
         var customer = await _db.Customers.FindAsync(dto.CustomerId)
             ?? throw new InvalidOperationException("Customer not found");
         bool interState = !string.Equals(customer.State.Trim(), company.State.Trim(), StringComparison.OrdinalIgnoreCase);
 
         bool useBillingAddress = dto.ShipSameAsBilling || string.IsNullOrWhiteSpace(dto.ShipToName);
 
-        var invoice = new Invoice
-        {
-            InvoiceNumber = FormatInvoiceNumber(company.InvoicePrefix, company.NextInvoiceNumber),
-            InvoiceDate = dto.InvoiceDate,
-            CustomerId = dto.CustomerId,
-            PlaceOfSupply = string.IsNullOrWhiteSpace(dto.PlaceOfSupply) ? customer.State : dto.PlaceOfSupply.Trim(),
-            IsInterState = interState,
-            ShipToName = useBillingAddress ? customer.Name : dto.ShipToName!,
-            ShipToAddress = useBillingAddress ? customer.Address : dto.ShipToAddress ?? string.Empty,
-            ShipToCity = useBillingAddress ? customer.City : dto.ShipToCity ?? string.Empty,
-            ShipToState = useBillingAddress ? customer.State : dto.ShipToState ?? string.Empty,
-            ShipToPincode = useBillingAddress ? customer.Pincode : dto.ShipToPincode ?? string.Empty,
-            Terms = string.IsNullOrWhiteSpace(dto.Terms) ? "Due on Receipt" : dto.Terms.Trim(),
-            DueDate = string.IsNullOrWhiteSpace(dto.DueDate) ? "As per Agreement" : dto.DueDate.Trim(),
-            WorkOrderNo = dto.WorkOrderNo?.Trim() ?? string.Empty,
-            PurchaseOrderNo = dto.PurchaseOrderNo?.Trim() ?? string.Empty,
-            // Calendar date only; tagged UTC because PostgreSQL rejects unspecified-kind timestamps.
-            PurchaseDate = dto.PurchaseDate.HasValue
-                ? DateTime.SpecifyKind(dto.PurchaseDate.Value.Date, DateTimeKind.Utc)
-                : null,
-            Notes = dto.Notes,
-            Status = InvoiceStatus.Unpaid
-        };
+        invoice.InvoiceDate = dto.InvoiceDate;
+        invoice.CustomerId = dto.CustomerId;
+        invoice.PlaceOfSupply = string.IsNullOrWhiteSpace(dto.PlaceOfSupply) ? customer.State : dto.PlaceOfSupply.Trim();
+        invoice.IsInterState = interState;
+        invoice.ShipToName = useBillingAddress ? customer.Name : dto.ShipToName!;
+        invoice.ShipToAddress = useBillingAddress ? customer.Address : dto.ShipToAddress ?? string.Empty;
+        invoice.ShipToCity = useBillingAddress ? customer.City : dto.ShipToCity ?? string.Empty;
+        invoice.ShipToState = useBillingAddress ? customer.State : dto.ShipToState ?? string.Empty;
+        invoice.ShipToPincode = useBillingAddress ? customer.Pincode : dto.ShipToPincode ?? string.Empty;
+        invoice.Terms = string.IsNullOrWhiteSpace(dto.Terms) ? "Due on Receipt" : dto.Terms.Trim();
+        invoice.DueDate = string.IsNullOrWhiteSpace(dto.DueDate) ? "As per Agreement" : dto.DueDate.Trim();
+        invoice.WorkOrderNo = dto.WorkOrderNo?.Trim() ?? string.Empty;
+        invoice.PurchaseOrderNo = dto.PurchaseOrderNo?.Trim() ?? string.Empty;
+        // Calendar date only; tagged UTC because PostgreSQL rejects unspecified-kind timestamps.
+        invoice.PurchaseDate = dto.PurchaseDate.HasValue
+            ? DateTime.SpecifyKind(dto.PurchaseDate.Value.Date, DateTimeKind.Utc)
+            : null;
+        invoice.Notes = dto.Notes;
 
         decimal subtotal = 0, totalCgst = 0, totalSgst = 0, totalIgst = 0;
 
@@ -120,7 +167,8 @@ public class InvoiceService
                     Type = StockTransactionType.Sale,
                     Quantity = -line.Quantity,
                     ReferenceType = "Invoice",
-                    Notes = "Auto-deducted on invoice"
+                    ReferenceId = invoice.Id == 0 ? null : invoice.Id,
+                    Notes = invoice.Id == 0 ? "Auto-deducted on invoice" : $"Auto-deducted on editing {invoice.InvoiceNumber}"
                 });
             }
         }
@@ -131,12 +179,6 @@ public class InvoiceService
         invoice.IgstAmount = totalIgst;
         invoice.TotalGst = totalCgst + totalSgst + totalIgst;
         invoice.GrandTotal = subtotal + invoice.TotalGst;
-
-        _db.Invoices.Add(invoice);
-        company.NextInvoiceNumber += 1;
-
-        await _db.SaveChangesAsync();
-        return invoice;
     }
 
     // A run of '#' in the prefix marks where the number goes, zero-padded to the run's width

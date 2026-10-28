@@ -3,6 +3,7 @@
     <div class="page-header">
       <h1>Invoice {{ inv.invoiceNumber }}</h1>
       <div class="header-actions">
+        <a mat-stroked-button [routerLink]="['/invoices', inv.id, 'edit']"><mat-icon>edit</mat-icon> Edit</a>
         <a mat-stroked-button [routerLink]="['/invoices', inv.id, 'print']"><mat-icon>print</mat-icon> Print</a>
         <a mat-button routerLink="/invoices"><mat-icon>arrow_back</mat-icon> Back</a>
       </div>
@@ -88,7 +89,7 @@
   }
 } @else {
   <div class="page-header">
-    <h1>New Invoice</h1>
+    <h1>{{ editId ? 'Edit Invoice ' + editNumber : 'New Invoice' }}</h1>
     <a mat-button routerLink="/invoices"><mat-icon>arrow_back</mat-icon> Back</a>
   </div>
 
@@ -233,7 +234,7 @@
     </div>
 
     <button mat-flat-button color="primary" type="button" [disabled]="saving" (click)="save()">
-      Save Invoice
+      {{ editId ? 'Update Invoice' : 'Save Invoice' }}
     </button>
   </form>
 }

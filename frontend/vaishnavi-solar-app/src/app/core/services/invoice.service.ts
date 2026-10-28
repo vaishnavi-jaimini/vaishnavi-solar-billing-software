@@ -27,6 +27,10 @@ export class InvoiceService {
     return this.http.post<Invoice>(this.base, dto);
   }
 
+  update(id: number, dto: InvoiceUpsert): Observable<Invoice> {
+    return this.http.put<Invoice>(`${this.base}/${id}`, dto);
+  }
+
   convertQuotation(quotationId: number): Observable<Invoice> {
     return this.http.post<Invoice>(`${this.base}/convert-quotation/${quotationId}`, {});
   }

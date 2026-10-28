@@ -56,6 +56,11 @@ export const routes: Routes = [
       import('./features/invoices/invoice-form/invoice-form.component').then((m) => m.InvoiceFormComponent)
   },
   {
+    path: 'invoices/:id/edit',
+    loadComponent: () =>
+      import('./features/invoices/invoice-form/invoice-form.component').then((m) => m.InvoiceFormComponent)
+  },
+  {
     path: 'invoices/:id/print',
     loadComponent: () =>
       import('./features/invoices/invoice-print/invoice-print.component').then((m) => m.InvoicePrintComponent)

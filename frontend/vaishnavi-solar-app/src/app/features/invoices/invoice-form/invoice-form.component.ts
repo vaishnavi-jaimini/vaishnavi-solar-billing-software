@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormArray, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { forkJoin } from 'rxjs';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -39,6 +40,8 @@ import { Customer, Invoice, Item } from '../../../core/models/models';
 export class InvoiceFormComponent implements OnInit {
   viewMode = false;
   viewInvoice: Invoice | null = null;
+  editId: number | null = null;
+  editNumber = '';
   viewColumns: string[] = ['item', 'hsn', 'qty', 'rate', 'cgst', 'sgst', 'igst', 'amount'];
   customers: Customer[] = [];
   items: Item[] = [];
@@ -81,10 +84,20 @@ export class InvoiceFormComponent implements OnInit {
 
   ngOnInit(): void {
     const idParam = this.route.snapshot.paramMap.get('id');
-    this.customerService.getAll().subscribe((c) => (this.customers = c));
     this.itemService.getAll(undefined, true).subscribe((i) => (this.items = i));
     this.companyService.get().subscribe((c) => (this.companyState = c.state));
 
+    if (idParam && this.route.snapshot.url.some((s) => s.path === 'edit')) {
+      this.editId = Number(idParam);
+      // Customers are needed to tell whether the saved ship-to address is just the billing address.
+      forkJoin([this.customerService.getAll(), this.invoiceService.getById(this.editId)]).subscribe(([c, inv]) => {
+        this.customers = c;
+        this.loadForEdit(inv);
+      });
+      return;
+    }
+
+    this.customerService.getAll().subscribe((c) => (this.customers = c));
     if (idParam) {
       this.viewMode = true;
       this.invoiceService.getById(Number(idParam)).subscribe((inv) => {
@@ -92,6 +105,45 @@ export class InvoiceFormComponent implements OnInit {
       });
     } else {
       this.addLine();
+    }
+  }
+
+  private loadForEdit(inv: Invoice): void {
+    this.editNumber = inv.invoiceNumber;
+    const customer = this.customers.find((c) => c.id === inv.customerId);
+    const shipSameAsBilling =
+      !!customer &&
+      inv.shipToName === customer.name &&
+      inv.shipToAddress === customer.address &&
+      inv.shipToCity === customer.city &&
+      inv.shipToState === customer.state &&
+      inv.shipToPincode === customer.pincode;
+    this.form.patchValue({
+      customerId: inv.customerId,
+      invoiceDate: new Date(inv.invoiceDate),
+      placeOfSupply: inv.placeOfSupply,
+      terms: inv.terms,
+      dueDate: inv.dueDate,
+      workOrderNo: inv.workOrderNo,
+      purchaseOrderNo: inv.purchaseOrderNo,
+      purchaseDate: inv.purchaseDate ? new Date(inv.purchaseDate) : null,
+      notes: inv.notes ?? '',
+      shipSameAsBilling,
+      shipToName: inv.shipToName,
+      shipToAddress: inv.shipToAddress,
+      shipToCity: inv.shipToCity,
+      shipToState: inv.shipToState,
+      shipToPincode: inv.shipToPincode
+    });
+    for (const l of inv.items) {
+      this.addLine();
+      this.lines.at(this.lines.length - 1).patchValue({
+        itemId: l.itemId,
+        description: l.description,
+        quantity: l.quantity,
+        rate: l.rate,
+        gstPercent: l.gstPercent
+      });
     }
   }
 
@@ -208,8 +260,7 @@ export class InvoiceFormComponent implements OnInit {
     this.saving = true;
     const value = this.form.getRawValue();
     const invoiceDate = value.invoiceDate || new Date();
-    this.invoiceService
-      .create({
+    const dto = {
         customerId: value.customerId,
         invoiceDate,
         notes: value.notes,
@@ -226,16 +277,19 @@ export class InvoiceFormComponent implements OnInit {
         purchaseOrderNo: value.purchaseOrderNo,
         purchaseDate: this.toDateOnly(value.purchaseDate),
         items: value.lines
-      })
-      .subscribe({
-        next: (inv) => {
-          this.snackBar.open(`Invoice ${inv.invoiceNumber} created`, 'Close', { duration: 3000 });
-          this.router.navigate(['/invoices', inv.id]);
-        },
-        error: (err) => {
-          this.saving = false;
-          this.snackBar.open(err.error || 'Could not create invoice', 'Close', { duration: 3000 });
-        }
-      });
+    };
+    const request = this.editId ? this.invoiceService.update(this.editId, dto) : this.invoiceService.create(dto);
+    request.subscribe({
+      next: (inv) => {
+        this.snackBar.open(`Invoice ${inv.invoiceNumber} ${this.editId ? 'updated' : 'created'}`, 'Close', {
+          duration: 3000
+        });
+        this.router.navigate(['/invoices', inv.id]);
+      },
+      error: (err) => {
+        this.saving = false;
+        this.snackBar.open(err.error || 'Could not save invoice', 'Close', { duration: 3000 });
+      }
+    });
   }
 }

@@ -109,6 +109,24 @@ public class InvoicesController : ControllerBase
         }
     }
 
+    [HttpPut("{id}")]
+    public async Task<ActionResult<InvoiceDto>> Update(int id, InvoiceUpsertDto dto)
+    {
+        try
+        {
+            await _invoiceService.UpdateInvoiceAsync(id, dto);
+            return await GetById(id);
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
     [HttpPost("convert-quotation/{quotationId}")]
     public async Task<ActionResult<InvoiceDto>> ConvertQuotation(int quotationId)
     {
