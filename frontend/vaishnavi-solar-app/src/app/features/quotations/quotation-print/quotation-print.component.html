@@ -139,12 +139,23 @@
       </div>
 
       <div class="declaration">
-        <div class="party-label">Terms</div>
-        @if (quotation.validUntil) {
-          <p>Prices are valid until {{ quotation.validUntil | date: 'dd-MMM-yyyy' }}.</p>
-        }
-        <p>Freight Charges will be Extra as per Actuals on TO-PAY Basis.</p>
-        <p>Warranty Void of Solar Inverter if ACDB &amp; DCDB is not Installed at site.</p>
+        <div class="party-label">Terms &amp; Conditions</div>
+        <p>1) The Payment Terms: 100% Advance along with techno-commercial clear Purchase order.</p>
+        <p>2) Delivery: Around 2-3 Weeks after receipt of Techno-Commercially clear PO with advance.</p>
+        <p>
+          3) Purchase order cannot be cancelled without our prior consent in writing and all expenses incurred till
+          the time of cancellation has to pay by the client.
+        </p>
+        <p>4) Transportation Charges will be Extra as applicable &amp; Paid by Party.</p>
+        <p>5) All kind of Insurance has to be arranged by buyer at their cost.</p>
+        <p>6) GST will be Extra &#64; 5% on above mentioned rates.</p>
+        <p>7) Purchase Order should be in favor of “VAISHNAVI SOLAR.”</p>
+        <p>8) Other Duties &amp; levies if applicable will be charge extra.</p>
+        <p>9) The venue of arbitration shall be Vadodara only.</p>
+        <p>10) Offer valid for 10 days from the Quotation Date.</p>
+        <p>11) Subject to Vadodara Jurisdiction.</p>
+        <p>12) Prices are subject of Change without any prior Notice as per Market Conditions.</p>
+        <p>13) Warranty 10 Years.</p>
         @if (quotation.notes) {
           <div class="party-label notes-label">Notes</div>
           <p>{{ quotation.notes }}</p>
