@@ -33,6 +33,7 @@ public class CompanyController : ControllerBase
             BankAccountName = c.BankAccountName,
             BankBranch = c.BankBranch,
             InvoicePrefix = c.InvoicePrefix,
+            NextInvoiceNumber = c.NextInvoiceNumber,
             QuotationPrefix = c.QuotationPrefix,
             NextQuotationNumber = c.NextQuotationNumber,
             ProformaPrefix = c.ProformaPrefix,
@@ -60,6 +61,10 @@ public class CompanyController : ControllerBase
         if (!string.IsNullOrWhiteSpace(dto.InvoicePrefix))
         {
             c.InvoicePrefix = dto.InvoicePrefix;
+        }
+        if (dto.NextInvoiceNumber > 0)
+        {
+            c.NextInvoiceNumber = dto.NextInvoiceNumber;
         }
         if (!string.IsNullOrWhiteSpace(dto.QuotationPrefix))
         {

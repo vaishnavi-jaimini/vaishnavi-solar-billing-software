@@ -17,6 +17,7 @@ public class CompanyDto
     public string BankAccountName { get; set; } = string.Empty;
     public string BankBranch { get; set; } = string.Empty;
     public string InvoicePrefix { get; set; } = "INV-";
+    public int NextInvoiceNumber { get; set; } = 1;
     public string QuotationPrefix { get; set; } = "VS/SL###/2026-27";
     public int NextQuotationNumber { get; set; } = 1;
     public string ProformaPrefix { get; set; } = "PRO-";

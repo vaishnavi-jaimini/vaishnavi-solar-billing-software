@@ -16,6 +16,7 @@ export interface Company {
   bankAccountName: string;
   bankBranch: string;
   invoicePrefix: string;
+  nextInvoiceNumber: number;
   quotationPrefix: string;
   nextQuotationNumber: number;
   proformaPrefix: string;
