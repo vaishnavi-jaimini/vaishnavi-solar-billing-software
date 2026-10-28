@@ -16,7 +16,6 @@
         </div>
         <div class="invoice-title-block">
           <div class="invoice-title">QUOTATION</div>
-          <div class="not-tax-note">This is not a Tax Invoice</div>
           <div class="invoice-number">{{ quotation.quotationNumber }}</div>
           <div class="invoice-date">Date: {{ quotation.date | date: 'dd-MMM-yyyy' }}</div>
           @if (quotation.validUntil) {
@@ -141,7 +140,6 @@
 
       <div class="declaration">
         <div class="party-label">Terms</div>
-        <p>This quotation is an offer of prices and is not a Tax Invoice.</p>
         @if (quotation.validUntil) {
           <p>Prices are valid until {{ quotation.validUntil | date: 'dd-MMM-yyyy' }}.</p>
         }
