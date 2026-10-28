@@ -135,6 +135,12 @@
       <textarea matInput formControlName="notes" rows="2"></textarea>
     </mat-form-field>
 
+    <mat-form-field appearance="outline" class="full-width notes-field">
+      <mat-label>Terms &amp; Conditions</mat-label>
+      <textarea matInput formControlName="termsAndConditions" rows="10"></textarea>
+      <mat-hint>One term per line. Clear it to print the standard terms.</mat-hint>
+    </mat-form-field>
+
     <div class="totals">
       <div>Subtotal: ₹{{ subtotal | number: '1.2-2' }}</div>
       @if (form.get('customerId')?.value) {

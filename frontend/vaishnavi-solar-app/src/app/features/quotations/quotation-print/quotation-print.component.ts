@@ -7,6 +7,7 @@ import { QuotationService } from '../../../core/services/quotation.service';
 import { CompanyService } from '../../../core/services/company.service';
 import { Company, Quotation } from '../../../core/models/models';
 import { numberToIndianWords } from '../../../core/utils/number-to-words';
+import { DEFAULT_QUOTATION_TERMS } from '../quotation-terms';
 
 @Component({
   selector: 'app-quotation-print',
@@ -33,6 +34,12 @@ export class QuotationPrintComponent implements OnInit {
 
   amountInWords(amount: number): string {
     return numberToIndianWords(amount);
+  }
+
+  // Quotations saved before terms were editable have none stored, so they print the standard list.
+  termLines(quotation: Quotation): string[] {
+    const terms = quotation.termsAndConditions?.trim() || DEFAULT_QUOTATION_TERMS;
+    return terms.split('\n').map((t) => t.trim()).filter((t) => t);
   }
 
   print(): void {

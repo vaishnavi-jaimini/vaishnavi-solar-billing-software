@@ -79,7 +79,8 @@ using (var scope = app.Services.CreateScope())
             "ALTER TABLE \"Invoices\" ADD COLUMN IF NOT EXISTS \"DueDate\" text NOT NULL DEFAULT 'As per Agreement'; " +
             "ALTER TABLE \"Invoices\" ADD COLUMN IF NOT EXISTS \"WorkOrderNo\" text NOT NULL DEFAULT ''; " +
             "ALTER TABLE \"Invoices\" ADD COLUMN IF NOT EXISTS \"PurchaseOrderNo\" text NOT NULL DEFAULT ''; " +
-            "ALTER TABLE \"Invoices\" ADD COLUMN IF NOT EXISTS \"PurchaseDate\" timestamp with time zone NULL;");
+            "ALTER TABLE \"Invoices\" ADD COLUMN IF NOT EXISTS \"PurchaseDate\" timestamp with time zone NULL; " +
+            "ALTER TABLE \"Quotations\" ADD COLUMN IF NOT EXISTS \"TermsAndConditions\" text NOT NULL DEFAULT '';");
     }
     else
     {

@@ -779,6 +779,10 @@ namespace VaishnaviSolar.Api.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<string>("TermsAndConditions")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<decimal>("TotalGst")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");

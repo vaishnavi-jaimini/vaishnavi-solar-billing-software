@@ -15,6 +15,7 @@ import { CustomerService } from '../../../core/services/customer.service';
 import { ItemService } from '../../../core/services/item.service';
 import { QuotationService } from '../../../core/services/quotation.service';
 import { Customer, Item, Quotation } from '../../../core/models/models';
+import { DEFAULT_QUOTATION_TERMS } from '../quotation-terms';
 
 @Component({
   selector: 'app-quotation-form',
@@ -50,6 +51,7 @@ export class QuotationFormComponent implements OnInit {
     date: [new Date(), Validators.required],
     validUntil: [null],
     notes: [''],
+    termsAndConditions: [DEFAULT_QUOTATION_TERMS],
     lines: this.fb.array([])
   });
 
@@ -98,7 +100,8 @@ export class QuotationFormComponent implements OnInit {
       customerId: q.customerId,
       date: new Date(q.date),
       validUntil: q.validUntil ? new Date(q.validUntil) : null,
-      notes: q.notes ?? ''
+      notes: q.notes ?? '',
+      termsAndConditions: q.termsAndConditions || DEFAULT_QUOTATION_TERMS
     });
     for (const l of q.items) {
       this.addLine();
@@ -212,6 +215,7 @@ export class QuotationFormComponent implements OnInit {
       date: value.date,
       validUntil: value.validUntil,
       notes: value.notes,
+      termsAndConditions: value.termsAndConditions,
       items: value.lines
     };
     const request = this.editId ? this.quotationService.update(this.editId, dto) : this.quotationService.create(dto);

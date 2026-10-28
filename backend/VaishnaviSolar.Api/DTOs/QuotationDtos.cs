@@ -42,6 +42,7 @@ public class QuotationDto
     public decimal TotalGst { get; set; }
     public decimal GrandTotal { get; set; }
     public string? Notes { get; set; }
+    public string TermsAndConditions { get; set; } = string.Empty;
     public int? ConvertedInvoiceId { get; set; }
     public List<QuotationItemDto> Items { get; set; } = new();
 }
@@ -61,5 +62,6 @@ public class QuotationUpsertDto
     public DateTime Date { get; set; } = DateTime.UtcNow;
     public DateTime? ValidUntil { get; set; }
     public string? Notes { get; set; }
+    public string? TermsAndConditions { get; set; }
     public List<QuotationItemInputDto> Items { get; set; } = new();
 }

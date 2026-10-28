@@ -72,6 +72,7 @@ public class QuotationsController : ControllerBase
             TotalGst = q.TotalGst,
             GrandTotal = q.GrandTotal,
             Notes = q.Notes,
+            TermsAndConditions = q.TermsAndConditions,
             ConvertedInvoiceId = q.ConvertedInvoiceId,
             Items = items
         };

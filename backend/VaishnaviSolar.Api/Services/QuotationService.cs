@@ -27,6 +27,7 @@ public class QuotationService
             ValidUntil = dto.ValidUntil,
             CustomerId = dto.CustomerId,
             Notes = dto.Notes,
+            TermsAndConditions = dto.TermsAndConditions?.Trim() ?? string.Empty,
             Status = QuotationStatus.Draft
         };
 
@@ -50,6 +51,7 @@ public class QuotationService
         quotation.ValidUntil = dto.ValidUntil;
         quotation.CustomerId = dto.CustomerId;
         quotation.Notes = dto.Notes;
+        quotation.TermsAndConditions = dto.TermsAndConditions?.Trim() ?? string.Empty;
 
         // Lines are replaced wholesale rather than diffed; the quotation number and status stay the same.
         _db.QuotationItems.RemoveRange(quotation.Items);

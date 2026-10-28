@@ -13,6 +13,8 @@ public class Quotation
     public decimal TotalGst { get; set; }
     public decimal GrandTotal { get; set; }
     public string? Notes { get; set; }
+    // Numbered terms printed on the quotation, one per line. Empty means the standard list is printed.
+    public string TermsAndConditions { get; set; } = string.Empty;
     public int? ConvertedInvoiceId { get; set; }
 
     public ICollection<QuotationItem> Items { get; set; } = new List<QuotationItem>();

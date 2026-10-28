@@ -93,6 +93,7 @@ export interface Quotation {
   totalGst: number;
   grandTotal: number;
   notes?: string;
+  termsAndConditions: string;
   convertedInvoiceId?: number | null;
   items: QuotationItem[];
 }
@@ -110,6 +111,7 @@ export interface QuotationUpsert {
   date: string;
   validUntil?: string | null;
   notes?: string;
+  termsAndConditions?: string;
   items: LineItemInput[];
 }
 
