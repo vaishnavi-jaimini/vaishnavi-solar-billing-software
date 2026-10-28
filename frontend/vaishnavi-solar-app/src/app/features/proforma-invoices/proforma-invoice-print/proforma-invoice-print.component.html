@@ -122,6 +122,10 @@
           Tax Invoice is issued. Freight Charges will be Extra as per Actuals on TO-PAY Basis. Warranty Void of
           Solar Inverter if ACDB &amp; DCDB is not Installed at site.
         </p>
+        @if (proforma.notes) {
+          <div class="party-label notes-label">Notes</div>
+          <p>{{ proforma.notes }}</p>
+        }
       </div>
 
       <div class="footer">
