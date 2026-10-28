@@ -17,26 +17,54 @@ public class ProformaInvoiceService
     public async Task<ProformaInvoice> CreateProformaInvoiceAsync(ProformaInvoiceUpsertDto dto)
     {
         var company = await _db.Companies.FirstAsync();
+        var proforma = new ProformaInvoice
+        {
+            ProformaNumber = $"{company.ProformaPrefix}{company.NextProformaNumber:D4}"
+        };
+        await ApplyDetailsAsync(proforma, dto, company);
+
+        _db.ProformaInvoices.Add(proforma);
+        company.NextProformaNumber += 1;
+
+        await _db.SaveChangesAsync();
+        return proforma;
+    }
+
+    public async Task<ProformaInvoice> UpdateProformaInvoiceAsync(int id, ProformaInvoiceUpsertDto dto)
+    {
+        var proforma = await _db.ProformaInvoices.Include(p => p.Items).FirstOrDefaultAsync(p => p.Id == id)
+            ?? throw new KeyNotFoundException("Proforma invoice not found");
+        if (proforma.ConvertedInvoiceId.HasValue)
+            throw new InvalidOperationException("Cannot edit a proforma invoice already converted to an invoice.");
+        var company = await _db.Companies.FirstAsync();
+
+        // Lines are replaced wholesale; the proforma number stays the same.
+        _db.ProformaInvoiceItems.RemoveRange(proforma.Items);
+        proforma.Items.Clear();
+        await ApplyDetailsAsync(proforma, dto, company);
+
+        await _db.SaveChangesAsync();
+        return proforma;
+    }
+
+    private async Task ApplyDetailsAsync(ProformaInvoice proforma, ProformaInvoiceUpsertDto dto, Company company)
+    {
         var customer = await _db.Customers.FindAsync(dto.CustomerId)
             ?? throw new InvalidOperationException("Customer not found");
         bool interState = !string.Equals(customer.State.Trim(), company.State.Trim(), StringComparison.OrdinalIgnoreCase);
 
         bool useBillingAddress = dto.ShipSameAsBilling || string.IsNullOrWhiteSpace(dto.ShipToName);
 
-        var proforma = new ProformaInvoice
-        {
-            ProformaNumber = $"{company.ProformaPrefix}{company.NextProformaNumber:D4}",
-            ProformaDate = dto.ProformaDate,
-            CustomerId = dto.CustomerId,
-            PlaceOfSupply = customer.State,
-            IsInterState = interState,
-            ShipToName = useBillingAddress ? customer.Name : dto.ShipToName!,
-            ShipToAddress = useBillingAddress ? customer.Address : dto.ShipToAddress ?? string.Empty,
-            ShipToCity = useBillingAddress ? customer.City : dto.ShipToCity ?? string.Empty,
-            ShipToState = useBillingAddress ? customer.State : dto.ShipToState ?? string.Empty,
-            ShipToPincode = useBillingAddress ? customer.Pincode : dto.ShipToPincode ?? string.Empty,
-            Notes = dto.Notes
-        };
+        proforma.ProformaDate = dto.ProformaDate;
+        proforma.CustomerId = dto.CustomerId;
+        proforma.PlaceOfSupply = customer.State;
+        proforma.IsInterState = interState;
+        proforma.ShipToName = useBillingAddress ? customer.Name : dto.ShipToName!;
+        proforma.ShipToAddress = useBillingAddress ? customer.Address : dto.ShipToAddress ?? string.Empty;
+        proforma.ShipToCity = useBillingAddress ? customer.City : dto.ShipToCity ?? string.Empty;
+        proforma.ShipToState = useBillingAddress ? customer.State : dto.ShipToState ?? string.Empty;
+        proforma.ShipToPincode = useBillingAddress ? customer.Pincode : dto.ShipToPincode ?? string.Empty;
+        proforma.Notes = dto.Notes;
 
         decimal subtotal = 0, totalCgst = 0, totalSgst = 0, totalIgst = 0;
 
@@ -85,11 +113,5 @@ public class ProformaInvoiceService
         proforma.IgstAmount = totalIgst;
         proforma.TotalGst = totalCgst + totalSgst + totalIgst;
         proforma.GrandTotal = subtotal + proforma.TotalGst;
-
-        _db.ProformaInvoices.Add(proforma);
-        company.NextProformaNumber += 1;
-
-        await _db.SaveChangesAsync();
-        return proforma;
     }
 }

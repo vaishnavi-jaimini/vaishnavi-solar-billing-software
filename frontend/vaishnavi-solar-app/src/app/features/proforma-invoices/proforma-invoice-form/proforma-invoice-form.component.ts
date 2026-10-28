@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormArray, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { forkJoin } from 'rxjs';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -39,6 +40,8 @@ import { Customer, Item, ProformaInvoice } from '../../../core/models/models';
 export class ProformaInvoiceFormComponent implements OnInit {
   viewMode = false;
   viewProforma: ProformaInvoice | null = null;
+  editId: number | null = null;
+  editNumber = '';
   viewColumns: string[] = ['item', 'hsn', 'qty', 'rate', 'cgst', 'sgst', 'igst', 'amount'];
   customers: Customer[] = [];
   items: Item[] = [];
@@ -75,10 +78,20 @@ export class ProformaInvoiceFormComponent implements OnInit {
 
   ngOnInit(): void {
     const idParam = this.route.snapshot.paramMap.get('id');
-    this.customerService.getAll().subscribe((c) => (this.customers = c));
     this.itemService.getAll(undefined, true).subscribe((i) => (this.items = i));
     this.companyService.get().subscribe((c) => (this.companyState = c.state));
 
+    if (idParam && this.route.snapshot.url.some((s) => s.path === 'edit')) {
+      this.editId = Number(idParam);
+      // Customers are needed to tell whether the saved ship-to address is just the billing address.
+      forkJoin([this.customerService.getAll(), this.proformaService.getById(this.editId)]).subscribe(([c, p]) => {
+        this.customers = c;
+        this.loadForEdit(p);
+      });
+      return;
+    }
+
+    this.customerService.getAll().subscribe((c) => (this.customers = c));
     if (idParam) {
       this.viewMode = true;
       this.proformaService.getById(Number(idParam)).subscribe((p) => {
@@ -86,6 +99,46 @@ export class ProformaInvoiceFormComponent implements OnInit {
       });
     } else {
       this.addLine();
+    }
+  }
+
+  private loadForEdit(p: ProformaInvoice): void {
+    if (p.convertedInvoiceId) {
+      this.snackBar.open('This proforma invoice is already converted to an invoice and cannot be edited.', 'Close', {
+        duration: 3000
+      });
+      this.router.navigate(['/proforma-invoices', p.id]);
+      return;
+    }
+    this.editNumber = p.proformaNumber;
+    const customer = this.customers.find((c) => c.id === p.customerId);
+    const shipSameAsBilling =
+      !!customer &&
+      p.shipToName === customer.name &&
+      p.shipToAddress === customer.address &&
+      p.shipToCity === customer.city &&
+      p.shipToState === customer.state &&
+      p.shipToPincode === customer.pincode;
+    this.form.patchValue({
+      customerId: p.customerId,
+      proformaDate: new Date(p.proformaDate),
+      notes: p.notes ?? '',
+      shipSameAsBilling,
+      shipToName: p.shipToName,
+      shipToAddress: p.shipToAddress,
+      shipToCity: p.shipToCity,
+      shipToState: p.shipToState,
+      shipToPincode: p.shipToPincode
+    });
+    for (const l of p.items) {
+      this.addLine();
+      this.lines.at(this.lines.length - 1).patchValue({
+        itemId: l.itemId,
+        description: l.description,
+        quantity: l.quantity,
+        rate: l.rate,
+        gstPercent: l.gstPercent
+      });
     }
   }
 
@@ -205,8 +258,7 @@ export class ProformaInvoiceFormComponent implements OnInit {
     this.saving = true;
     const value = this.form.getRawValue();
     const proformaDate = value.proformaDate || new Date();
-    this.proformaService
-      .create({
+    const dto = {
         customerId: value.customerId,
         proformaDate,
         notes: value.notes,
@@ -217,16 +269,19 @@ export class ProformaInvoiceFormComponent implements OnInit {
         shipToState: value.shipToState,
         shipToPincode: value.shipToPincode,
         items: value.lines
-      })
-      .subscribe({
-        next: (p) => {
-          this.snackBar.open(`Proforma Invoice ${p.proformaNumber} created`, 'Close', { duration: 3000 });
-          this.router.navigate(['/proforma-invoices', p.id]);
-        },
-        error: (err) => {
-          this.saving = false;
-          this.snackBar.open(err.error || 'Could not create proforma invoice', 'Close', { duration: 3000 });
-        }
-      });
+    };
+    const request = this.editId ? this.proformaService.update(this.editId, dto) : this.proformaService.create(dto);
+    request.subscribe({
+      next: (p) => {
+        this.snackBar.open(`Proforma Invoice ${p.proformaNumber} ${this.editId ? 'updated' : 'created'}`, 'Close', {
+          duration: 3000
+        });
+        this.router.navigate(['/proforma-invoices', p.id]);
+      },
+      error: (err) => {
+        this.saving = false;
+        this.snackBar.open(err.error || 'Could not save proforma invoice', 'Close', { duration: 3000 });
+      }
+    });
   }
 }

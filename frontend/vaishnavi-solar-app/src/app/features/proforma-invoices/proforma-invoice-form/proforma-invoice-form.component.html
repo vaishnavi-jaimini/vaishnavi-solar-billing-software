@@ -4,6 +4,7 @@
       <h1>Proforma Invoice {{ p.proformaNumber }}</h1>
       <div class="header-actions">
         @if (!p.convertedInvoiceId) {
+          <a mat-stroked-button [routerLink]="['/proforma-invoices', p.id, 'edit']"><mat-icon>edit</mat-icon> Edit</a>
           <button mat-flat-button color="primary" (click)="convertToInvoice()">
             <mat-icon>sync_alt</mat-icon> Convert to Invoice
           </button>
@@ -87,7 +88,7 @@
   }
 } @else {
   <div class="page-header">
-    <h1>New Proforma Invoice</h1>
+    <h1>{{ editId ? 'Edit Proforma Invoice ' + editNumber : 'New Proforma Invoice' }}</h1>
     <a mat-button routerLink="/proforma-invoices"><mat-icon>arrow_back</mat-icon> Back</a>
   </div>
 
@@ -199,7 +200,7 @@
     </div>
 
     <button mat-flat-button color="primary" type="button" [disabled]="saving" (click)="save()">
-      Save Proforma Invoice
+      {{ editId ? 'Update Proforma Invoice' : 'Save Proforma Invoice' }}
     </button>
   </form>
 }

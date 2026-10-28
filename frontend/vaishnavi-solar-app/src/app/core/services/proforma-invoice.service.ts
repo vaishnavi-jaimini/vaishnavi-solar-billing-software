@@ -22,6 +22,10 @@ export class ProformaInvoiceService {
     return this.http.post<ProformaInvoice>(this.base, dto);
   }
 
+  update(id: number, dto: ProformaInvoiceUpsert): Observable<ProformaInvoice> {
+    return this.http.put<ProformaInvoice>(`${this.base}/${id}`, dto);
+  }
+
   convertToInvoice(id: number): Observable<{ invoiceId: number; invoiceNumber: string }> {
     return this.http.post<{ invoiceId: number; invoiceNumber: string }>(`${this.base}/${id}/convert-to-invoice`, {});
   }

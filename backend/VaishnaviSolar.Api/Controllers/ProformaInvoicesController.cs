@@ -98,6 +98,24 @@ public class ProformaInvoicesController : ControllerBase
         }
     }
 
+    [HttpPut("{id}")]
+    public async Task<ActionResult<ProformaInvoiceDto>> Update(int id, ProformaInvoiceUpsertDto dto)
+    {
+        try
+        {
+            await _proformaService.UpdateProformaInvoiceAsync(id, dto);
+            return await GetById(id);
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
     [HttpPost("{id}/convert-to-invoice")]
     public async Task<IActionResult> ConvertToInvoice(int id)
     {

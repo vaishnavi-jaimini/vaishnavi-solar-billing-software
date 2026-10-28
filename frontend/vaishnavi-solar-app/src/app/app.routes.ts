@@ -87,6 +87,13 @@ export const routes: Routes = [
       )
   },
   {
+    path: 'proforma-invoices/:id/edit',
+    loadComponent: () =>
+      import('./features/proforma-invoices/proforma-invoice-form/proforma-invoice-form.component').then(
+        (m) => m.ProformaInvoiceFormComponent
+      )
+  },
+  {
     path: 'proforma-invoices/:id/print',
     loadComponent: () =>
       import('./features/proforma-invoices/proforma-invoice-print/proforma-invoice-print.component').then(
