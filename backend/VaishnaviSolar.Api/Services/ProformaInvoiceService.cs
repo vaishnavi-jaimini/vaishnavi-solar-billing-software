@@ -19,7 +19,7 @@ public class ProformaInvoiceService
         var company = await _db.Companies.FirstAsync();
         var proforma = new ProformaInvoice
         {
-            ProformaNumber = $"{company.ProformaPrefix}{company.NextProformaNumber:D4}"
+            ProformaNumber = InvoiceService.FormatInvoiceNumber(company.ProformaPrefix, company.NextProformaNumber)
         };
         await ApplyDetailsAsync(proforma, dto, company);
 

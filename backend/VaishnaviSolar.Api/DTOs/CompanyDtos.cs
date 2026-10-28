@@ -19,4 +19,6 @@ public class CompanyDto
     public string InvoicePrefix { get; set; } = "INV-";
     public string QuotationPrefix { get; set; } = "VS/SL###/2026-27";
     public int NextQuotationNumber { get; set; } = 1;
+    public string ProformaPrefix { get; set; } = "PRO-";
+    public int NextProformaNumber { get; set; } = 1;
 }

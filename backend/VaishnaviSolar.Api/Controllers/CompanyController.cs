@@ -34,7 +34,9 @@ public class CompanyController : ControllerBase
             BankBranch = c.BankBranch,
             InvoicePrefix = c.InvoicePrefix,
             QuotationPrefix = c.QuotationPrefix,
-            NextQuotationNumber = c.NextQuotationNumber
+            NextQuotationNumber = c.NextQuotationNumber,
+            ProformaPrefix = c.ProformaPrefix,
+            NextProformaNumber = c.NextProformaNumber
         });
     }
 
@@ -66,6 +68,14 @@ public class CompanyController : ControllerBase
         if (dto.NextQuotationNumber > 0)
         {
             c.NextQuotationNumber = dto.NextQuotationNumber;
+        }
+        if (!string.IsNullOrWhiteSpace(dto.ProformaPrefix))
+        {
+            c.ProformaPrefix = dto.ProformaPrefix;
+        }
+        if (dto.NextProformaNumber > 0)
+        {
+            c.NextProformaNumber = dto.NextProformaNumber;
         }
         await _db.SaveChangesAsync();
         return await Get();

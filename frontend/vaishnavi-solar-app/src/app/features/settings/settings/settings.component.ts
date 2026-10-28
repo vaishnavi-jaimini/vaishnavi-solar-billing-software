@@ -37,7 +37,9 @@ export class SettingsComponent implements OnInit {
     bankBranch: [''],
     invoicePrefix: ['INV-', Validators.required],
     quotationPrefix: ['VS/SL###/2026-27', Validators.required],
-    nextQuotationNumber: [1, [Validators.required, Validators.min(1)]]
+    nextQuotationNumber: [1, [Validators.required, Validators.min(1)]],
+    proformaPrefix: ['PRO-', Validators.required],
+    nextProformaNumber: [1, [Validators.required, Validators.min(1)]]
   });
 
   constructor(

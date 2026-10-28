@@ -18,6 +18,8 @@ export interface Company {
   invoicePrefix: string;
   quotationPrefix: string;
   nextQuotationNumber: number;
+  proformaPrefix: string;
+  nextProformaNumber: number;
 }
 
 export interface Customer {
