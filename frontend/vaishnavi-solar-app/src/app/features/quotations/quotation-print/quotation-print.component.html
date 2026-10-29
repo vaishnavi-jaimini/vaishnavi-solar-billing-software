@@ -99,18 +99,12 @@
             <td>Subtotal</td>
             <td>₹{{ quotation.subtotal | number: '1.2-2' }}</td>
           </tr>
-          <tr>
-            <td>CGST</td>
-            <td>₹{{ quotation.cgstAmount | number: '1.2-2' }}</td>
-          </tr>
-          <tr>
-            <td>SGST</td>
-            <td>₹{{ quotation.sgstAmount | number: '1.2-2' }}</td>
-          </tr>
-          <tr>
-            <td>IGST</td>
-            <td>₹{{ quotation.igstAmount | number: '1.2-2' }}</td>
-          </tr>
+          @for (row of gstRows(quotation); track row.label) {
+            <tr>
+              <td>{{ row.label }}</td>
+              <td>₹{{ row.amount | number: '1.2-2' }}</td>
+            </tr>
+          }
           <tr class="grand-row">
             <td>Grand Total</td>
             <td>₹{{ quotation.grandTotal | number: '1.2-2' }}</td>

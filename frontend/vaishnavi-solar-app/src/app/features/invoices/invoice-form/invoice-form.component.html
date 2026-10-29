@@ -79,9 +79,9 @@
     </table>
     <div class="totals">
       <div>Subtotal: ₹{{ inv.subtotal | number: '1.2-2' }}</div>
-      <div>CGST: ₹{{ inv.cgstAmount | number: '1.2-2' }}</div>
-      <div>SGST: ₹{{ inv.sgstAmount | number: '1.2-2' }}</div>
-      <div>IGST: ₹{{ inv.igstAmount | number: '1.2-2' }}</div>
+      @for (row of gstRows(inv); track row.label) {
+        <div>{{ row.label }}: ₹{{ row.amount | number: '1.2-2' }}</div>
+      }
       <div class="grand">Grand Total: ₹{{ inv.grandTotal | number: '1.2-2' }}</div>
       <div>Paid: ₹{{ inv.amountPaid | number: '1.2-2' }}</div>
       <div class="balance">Balance: ₹{{ inv.balance | number: '1.2-2' }}</div>
@@ -227,9 +227,9 @@
 
     <div class="totals">
       <div>Subtotal: ₹{{ subtotal | number: '1.2-2' }}</div>
-      <div>CGST: ₹{{ cgst | number: '1.2-2' }}</div>
-      <div>SGST: ₹{{ sgst | number: '1.2-2' }}</div>
-      <div>IGST: ₹{{ igst | number: '1.2-2' }}</div>
+      @for (row of formGstRows; track row.label) {
+        <div>{{ row.label }}: ₹{{ row.amount | number: '1.2-2' }}</div>
+      }
       <div class="grand">Grand Total: ₹{{ grandTotal | number: '1.2-2' }}</div>
     </div>
 

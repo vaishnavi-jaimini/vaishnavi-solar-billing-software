@@ -7,6 +7,7 @@ import { ProformaInvoiceService } from '../../../core/services/proforma-invoice.
 import { CompanyService } from '../../../core/services/company.service';
 import { Company, ProformaInvoice } from '../../../core/models/models';
 import { numberToIndianWords } from '../../../core/utils/number-to-words';
+import { gstRateRows, GstRateRow } from '../../../core/utils/gst-breakup';
 
 @Component({
   selector: 'app-proforma-invoice-print',
@@ -29,6 +30,10 @@ export class ProformaInvoicePrintComponent implements OnInit {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     this.proformaService.getById(id).subscribe((p) => (this.proforma = p));
     this.companyService.get().subscribe((c) => (this.company = c));
+  }
+
+  gstRows(doc: ProformaInvoice): GstRateRow[] {
+    return gstRateRows(doc.items, doc.isInterState);
   }
 
   amountInWords(amount: number): string {

@@ -60,9 +60,9 @@
     </table>
     <div class="totals">
       <div>Subtotal: ₹{{ q.subtotal | number: '1.2-2' }}</div>
-      <div>CGST: ₹{{ q.cgstAmount | number: '1.2-2' }}</div>
-      <div>SGST: ₹{{ q.sgstAmount | number: '1.2-2' }}</div>
-      <div>IGST: ₹{{ q.igstAmount | number: '1.2-2' }}</div>
+      @for (row of gstRows(q); track row.label) {
+        <div>{{ row.label }}: ₹{{ row.amount | number: '1.2-2' }}</div>
+      }
       <div>Total GST: ₹{{ q.totalGst | number: '1.2-2' }}</div>
       <div class="grand">Grand Total: ₹{{ q.grandTotal | number: '1.2-2' }}</div>
     </div>
@@ -154,9 +154,9 @@
           {{ isInterState ? 'IGST applies (inter-state: ' + customerState + ')' : 'CGST + SGST apply (intra-state)' }}
         </div>
       }
-      <div>CGST: ₹{{ totalCgst | number: '1.2-2' }}</div>
-      <div>SGST: ₹{{ totalSgst | number: '1.2-2' }}</div>
-      <div>IGST: ₹{{ totalIgst | number: '1.2-2' }}</div>
+      @for (row of formGstRows; track row.label) {
+        <div>{{ row.label }}: ₹{{ row.amount | number: '1.2-2' }}</div>
+      }
       <div>Total GST: ₹{{ totalGst | number: '1.2-2' }}</div>
       <div class="grand">Grand Total: ₹{{ grandTotal | number: '1.2-2' }}</div>
     </div>

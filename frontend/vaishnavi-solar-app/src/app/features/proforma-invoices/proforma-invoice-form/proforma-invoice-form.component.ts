@@ -17,6 +17,7 @@ import { ItemService } from '../../../core/services/item.service';
 import { ProformaInvoiceService } from '../../../core/services/proforma-invoice.service';
 import { CompanyService } from '../../../core/services/company.service';
 import { Customer, Item, ProformaInvoice } from '../../../core/models/models';
+import { gstRateRows, GstRateRow } from '../../../core/utils/gst-breakup';
 
 @Component({
   selector: 'app-proforma-invoice-form',
@@ -222,16 +223,17 @@ export class ProformaInvoiceFormComponent implements OnInit {
     return this.lines.controls.reduce((sum, _, i) => sum + this.lineGst(i), 0);
   }
 
-  get cgst(): number {
-    return this.isInterState ? 0 : this.totalGst / 2;
+  gstRows(doc: ProformaInvoice): GstRateRow[] {
+    return gstRateRows(doc.items, doc.isInterState);
   }
 
-  get sgst(): number {
-    return this.isInterState ? 0 : this.totalGst / 2;
-  }
-
-  get igst(): number {
-    return this.isInterState ? this.totalGst : 0;
+  // gstRateRows only reads the CGST/SGST or IGST amount that applies, so each line passes all three.
+  get formGstRows(): GstRateRow[] {
+    const lines = this.lines.controls.map((c, i) => {
+      const gst = this.lineGst(i);
+      return { gstPercent: c.value.gstPercent, cgstAmount: gst / 2, sgstAmount: gst / 2, igstAmount: gst };
+    });
+    return gstRateRows(lines, this.isInterState);
   }
 
   get grandTotal(): number {

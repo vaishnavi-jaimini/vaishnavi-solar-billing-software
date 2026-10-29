@@ -15,6 +15,7 @@ import { CustomerService } from '../../../core/services/customer.service';
 import { ItemService } from '../../../core/services/item.service';
 import { QuotationService } from '../../../core/services/quotation.service';
 import { Customer, Item, Quotation } from '../../../core/models/models';
+import { gstRateRows, GstRateRow } from '../../../core/utils/gst-breakup';
 import { DEFAULT_QUOTATION_TERMS } from '../quotation-terms';
 
 @Component({
@@ -185,16 +186,18 @@ export class QuotationFormComponent implements OnInit {
     return this.sumLines((i) => this.lineAmount(i));
   }
 
-  get totalCgst(): number {
-    return this.sumLines((i) => this.lineCgst(i));
+  gstRows(doc: Quotation): GstRateRow[] {
+    return gstRateRows(doc.items, doc.isInterState);
   }
 
-  get totalSgst(): number {
-    return this.sumLines((i) => this.lineSgst(i));
-  }
-
-  get totalIgst(): number {
-    return this.sumLines((i) => this.lineIgst(i));
+  get formGstRows(): GstRateRow[] {
+    const lines = this.lines.controls.map((c, i) => ({
+      gstPercent: c.value.gstPercent,
+      cgstAmount: this.lineCgst(i),
+      sgstAmount: this.lineSgst(i),
+      igstAmount: this.lineIgst(i)
+    }));
+    return gstRateRows(lines, this.isInterState);
   }
 
   get totalGst(): number {

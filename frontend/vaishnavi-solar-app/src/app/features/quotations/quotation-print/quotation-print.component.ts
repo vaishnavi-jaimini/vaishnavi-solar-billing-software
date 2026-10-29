@@ -7,6 +7,7 @@ import { QuotationService } from '../../../core/services/quotation.service';
 import { CompanyService } from '../../../core/services/company.service';
 import { Company, Quotation } from '../../../core/models/models';
 import { numberToIndianWords } from '../../../core/utils/number-to-words';
+import { gstRateRows, GstRateRow } from '../../../core/utils/gst-breakup';
 import { DEFAULT_QUOTATION_TERMS } from '../quotation-terms';
 
 @Component({
@@ -30,6 +31,10 @@ export class QuotationPrintComponent implements OnInit {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     this.quotationService.getById(id).subscribe((q) => (this.quotation = q));
     this.companyService.get().subscribe((c) => (this.company = c));
+  }
+
+  gstRows(doc: Quotation): GstRateRow[] {
+    return gstRateRows(doc.items, doc.isInterState);
   }
 
   amountInWords(amount: number): string {

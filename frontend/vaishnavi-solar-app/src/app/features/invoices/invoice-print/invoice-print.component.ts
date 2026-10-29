@@ -7,6 +7,7 @@ import { InvoiceService } from '../../../core/services/invoice.service';
 import { CompanyService } from '../../../core/services/company.service';
 import { Company, Invoice } from '../../../core/models/models';
 import { numberToIndianWords } from '../../../core/utils/number-to-words';
+import { gstRateRows, GstRateRow } from '../../../core/utils/gst-breakup';
 
 @Component({
   selector: 'app-invoice-print',
@@ -29,6 +30,10 @@ export class InvoicePrintComponent implements OnInit {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     this.invoiceService.getById(id).subscribe((inv) => (this.invoice = inv));
     this.companyService.get().subscribe((c) => (this.company = c));
+  }
+
+  gstRows(doc: Invoice): GstRateRow[] {
+    return gstRateRows(doc.items, doc.isInterState);
   }
 
   amountInWords(amount: number): string {

@@ -94,18 +94,12 @@
             <td>Subtotal</td>
             <td>₹{{ proforma.subtotal | number: '1.2-2' }}</td>
           </tr>
-          <tr>
-            <td>CGST</td>
-            <td>₹{{ proforma.cgstAmount | number: '1.2-2' }}</td>
-          </tr>
-          <tr>
-            <td>SGST</td>
-            <td>₹{{ proforma.sgstAmount | number: '1.2-2' }}</td>
-          </tr>
-          <tr>
-            <td>IGST</td>
-            <td>₹{{ proforma.igstAmount | number: '1.2-2' }}</td>
-          </tr>
+          @for (row of gstRows(proforma); track row.label) {
+            <tr>
+              <td>{{ row.label }}</td>
+              <td>₹{{ row.amount | number: '1.2-2' }}</td>
+            </tr>
+          }
           <tr class="grand-row">
             <td>Grand Total (Estimated)</td>
             <td>₹{{ proforma.grandTotal | number: '1.2-2' }}</td>
