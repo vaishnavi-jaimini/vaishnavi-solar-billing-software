@@ -11,7 +11,7 @@ export interface GstRateRow {
 }
 
 // One CGST + SGST row (or one IGST row) per GST rate, so a bill with 5% and 18% items
-// shows "CGST @ 2.5%", "CGST @ 9%", "SGST @ 2.5%", "SGST @ 9%" instead of a single lump sum.
+// shows "CGST @ 2.5%", "SGST @ 2.5%", "CGST @ 9%", "SGST @ 9%" instead of a single lump sum.
 export function gstRateRows(lines: GstLine[], isInterState: boolean): GstRateRow[] {
   const byRate = new Map<number, GstLine>();
   for (const l of lines) {
@@ -28,8 +28,8 @@ export function gstRateRows(lines: GstLine[], isInterState: boolean): GstRateRow
   if (isInterState) {
     return rates.map((r) => ({ label: `IGST @ ${r.gstPercent}%`, amount: r.igstAmount }));
   }
-  return [
-    ...rates.map((r) => ({ label: `CGST @ ${r.gstPercent / 2}%`, amount: r.cgstAmount })),
-    ...rates.map((r) => ({ label: `SGST @ ${r.gstPercent / 2}%`, amount: r.sgstAmount }))
-  ];
+  return rates.flatMap((r) => [
+    { label: `CGST @ ${r.gstPercent / 2}%`, amount: r.cgstAmount },
+    { label: `SGST @ ${r.gstPercent / 2}%`, amount: r.sgstAmount }
+  ]);
 }
