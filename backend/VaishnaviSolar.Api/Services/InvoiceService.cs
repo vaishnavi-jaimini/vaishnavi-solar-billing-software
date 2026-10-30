@@ -89,6 +89,54 @@ public class InvoiceService
         return invoice;
     }
 
+    // Deleting puts the stock back and frees the quotation/proforma it came from so it can be
+    // converted again. Invoices with payments are refused — delete the payments first.
+    public async Task DeleteInvoiceAsync(int id)
+    {
+        var invoice = await _db.Invoices.Include(i => i.Items).ThenInclude(l => l.Item)
+            .FirstOrDefaultAsync(i => i.Id == id)
+            ?? throw new KeyNotFoundException("Invoice not found");
+
+        if (await _db.Payments.AnyAsync(p => p.InvoiceId == id))
+        {
+            throw new InvalidOperationException("Cannot delete an invoice that has payments. Delete its payments first.");
+        }
+
+        foreach (var line in invoice.Items)
+        {
+            if (line.Item != null && !line.Item.IsService)
+            {
+                line.Item.CurrentStock += line.Quantity;
+                _db.StockTransactions.Add(new StockTransaction
+                {
+                    ItemId = line.ItemId,
+                    Date = DateTime.UtcNow,
+                    Type = StockTransactionType.Adjustment,
+                    Quantity = line.Quantity,
+                    ReferenceType = "Invoice",
+                    ReferenceId = invoice.Id,
+                    Notes = $"Returned to stock on deleting {invoice.InvoiceNumber}"
+                });
+            }
+        }
+
+        var quotations = await _db.Quotations.Where(q => q.ConvertedInvoiceId == id).ToListAsync();
+        foreach (var q in quotations)
+        {
+            q.ConvertedInvoiceId = null;
+            q.Status = QuotationStatus.Accepted;
+        }
+        var proformas = await _db.ProformaInvoices.Where(p => p.ConvertedInvoiceId == id).ToListAsync();
+        foreach (var p in proformas)
+        {
+            p.ConvertedInvoiceId = null;
+        }
+
+        _db.InvoiceItems.RemoveRange(invoice.Items);
+        _db.Invoices.Remove(invoice);
+        await _db.SaveChangesAsync();
+    }
+
     // Fills the header fields and lines from the form, deducting stock for each non-service line.
     private async Task ApplyDetailsAsync(Invoice invoice, InvoiceUpsertDto dto, Company company)
     {

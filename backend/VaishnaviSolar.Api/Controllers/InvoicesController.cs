@@ -127,6 +127,24 @@ public class InvoicesController : ControllerBase
         }
     }
 
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        try
+        {
+            await _invoiceService.DeleteInvoiceAsync(id);
+            return NoContent();
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
     [HttpPost("convert-quotation/{quotationId}")]
     public async Task<ActionResult<InvoiceDto>> ConvertQuotation(int quotationId)
     {

@@ -31,6 +31,10 @@ export class InvoiceService {
     return this.http.put<Invoice>(`${this.base}/${id}`, dto);
   }
 
+  delete(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.base}/${id}`);
+  }
+
   convertQuotation(quotationId: number): Observable<Invoice> {
     return this.http.post<Invoice>(`${this.base}/convert-quotation/${quotationId}`, {});
   }
