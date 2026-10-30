@@ -26,6 +26,11 @@ public class ProformaInvoiceDto
     public DateTime ProformaDate { get; set; }
     public int CustomerId { get; set; }
     public string CustomerName { get; set; } = string.Empty;
+    public string CustomerAddress { get; set; } = string.Empty;
+    public string CustomerCity { get; set; } = string.Empty;
+    public string CustomerState { get; set; } = string.Empty;
+    public string CustomerPincode { get; set; } = string.Empty;
+    public string? CustomerGstin { get; set; }
     public string PlaceOfSupply { get; set; } = string.Empty;
     public bool IsInterState { get; set; }
     public string ShipToName { get; set; } = string.Empty;

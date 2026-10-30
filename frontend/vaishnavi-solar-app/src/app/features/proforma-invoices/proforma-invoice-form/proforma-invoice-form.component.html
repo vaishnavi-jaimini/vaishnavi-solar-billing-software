@@ -26,13 +26,18 @@
       <div class="party-box">
         <div class="party-label">Bill To</div>
         <div class="party-name">{{ p.customerName }}</div>
+        <div class="party-detail address-lines">{{ p.customerAddress }}</div>
+        <div class="party-detail">{{ p.customerCity }}, {{ p.customerState }} @if (p.customerPincode) { - {{ p.customerPincode }} }</div>
+        @if (p.customerGstin) {
+          <div class="party-detail">GSTIN: {{ p.customerGstin }}</div>
+        }
         <div class="party-detail">Place of Supply: {{ p.placeOfSupply }}</div>
         <div class="party-detail">{{ p.isInterState ? 'Inter-state (IGST)' : 'Intra-state (CGST + SGST)' }}</div>
       </div>
       <div class="party-box">
         <div class="party-label">Ship To</div>
         <div class="party-name">{{ p.shipToName }}</div>
-        <div class="party-detail">{{ p.shipToAddress }}</div>
+        <div class="party-detail address-lines">{{ p.shipToAddress }}</div>
         <div class="party-detail">{{ p.shipToCity }}, {{ p.shipToState }} @if (p.shipToPincode) { - {{ p.shipToPincode }} }</div>
       </div>
     </div>

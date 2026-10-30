@@ -20,7 +20,7 @@
       <div class="party-box">
         <div class="party-label">Bill To</div>
         <div class="party-name">{{ inv.customerName }}</div>
-        <div class="party-detail">{{ inv.customerAddress }}</div>
+        <div class="party-detail address-lines">{{ inv.customerAddress }}</div>
         <div class="party-detail">{{ inv.customerCity }}, {{ inv.customerState }} @if (inv.customerPincode) { - {{ inv.customerPincode }} }</div>
         @if (inv.customerGstin) {
           <div class="party-detail">GSTIN: {{ inv.customerGstin }}</div>
@@ -31,7 +31,7 @@
       <div class="party-box">
         <div class="party-label">Ship To</div>
         <div class="party-name">{{ inv.shipToName }}</div>
-        <div class="party-detail">{{ inv.shipToAddress }}</div>
+        <div class="party-detail address-lines">{{ inv.shipToAddress }}</div>
         <div class="party-detail">{{ inv.shipToCity }}, {{ inv.shipToState }} @if (inv.shipToPincode) { - {{ inv.shipToPincode }} }</div>
       </div>
     </div>

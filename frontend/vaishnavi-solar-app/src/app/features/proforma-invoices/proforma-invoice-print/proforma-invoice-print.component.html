@@ -25,6 +25,11 @@
         <div class="party-box">
           <div class="party-label">Bill To</div>
           <div class="party-name">{{ proforma.customerName }}</div>
+          <div class="party-detail address-lines">{{ proforma.customerAddress }}</div>
+          <div class="party-detail">{{ proforma.customerCity }}, {{ proforma.customerState }} @if (proforma.customerPincode) { - {{ proforma.customerPincode }} }</div>
+          @if (proforma.customerGstin) {
+            <div class="party-detail">GSTIN: {{ proforma.customerGstin }}</div>
+          }
           <div class="party-detail">Place of Supply: {{ proforma.placeOfSupply }}</div>
           <div class="party-detail">{{ proforma.isInterState ? 'Inter-state (IGST)' : 'Intra-state (CGST + SGST)' }}</div>
         </div>

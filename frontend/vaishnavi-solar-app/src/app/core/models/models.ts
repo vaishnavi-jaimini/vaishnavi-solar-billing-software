@@ -215,6 +215,11 @@ export interface ProformaInvoice {
   proformaDate: string;
   customerId: number;
   customerName: string;
+  customerAddress: string;
+  customerCity: string;
+  customerState: string;
+  customerPincode: string;
+  customerGstin?: string | null;
   placeOfSupply: string;
   isInterState: boolean;
   shipToName: string;
