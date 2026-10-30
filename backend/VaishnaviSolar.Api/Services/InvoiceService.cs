@@ -70,7 +70,7 @@ public class InvoiceService
                 line.Item.CurrentStock += line.Quantity;
                 _db.StockTransactions.Add(new StockTransaction
                 {
-                    ItemId = line.ItemId,
+                    ItemId = line.Item.Id,
                     Date = DateTime.UtcNow,
                     Type = StockTransactionType.Adjustment,
                     Quantity = line.Quantity,
@@ -109,7 +109,7 @@ public class InvoiceService
                 line.Item.CurrentStock += line.Quantity;
                 _db.StockTransactions.Add(new StockTransaction
                 {
-                    ItemId = line.ItemId,
+                    ItemId = line.Item.Id,
                     Date = DateTime.UtcNow,
                     Type = StockTransactionType.Adjustment,
                     Quantity = line.Quantity,
@@ -169,8 +169,7 @@ public class InvoiceService
 
         foreach (var line in dto.Items)
         {
-            var item = await _db.Items.FindAsync(line.ItemId)
-                ?? throw new InvalidOperationException($"Item {line.ItemId} not found");
+            var (item, description, hsn, unit) = await LineDetails.ResolveAsync(_db, line.ItemId, line.Description, line.HsnSacCode, line.Unit);
 
             decimal amount = line.Quantity * line.Rate;
             decimal gstAmount = Math.Round(amount * line.GstPercent / 100, 2);
@@ -187,11 +186,11 @@ public class InvoiceService
 
             invoice.Items.Add(new InvoiceItem
             {
-                ItemId = item.Id,
-                Description = string.IsNullOrWhiteSpace(line.Description) ? item.Name : line.Description,
-                HsnSacCode = item.HsnSacCode,
+                ItemId = item?.Id,
+                Description = description,
+                HsnSacCode = hsn,
                 Quantity = line.Quantity,
-                Unit = item.Unit,
+                Unit = unit,
                 Rate = line.Rate,
                 GstPercent = line.GstPercent,
                 CgstAmount = cgst,
@@ -205,7 +204,8 @@ public class InvoiceService
             totalSgst += sgst;
             totalIgst += igst;
 
-            if (!item.IsService)
+            // Only lines picked from the stored items move stock; typed-in products are not tracked.
+            if (item != null && !item.IsService)
             {
                 item.CurrentStock -= line.Quantity;
                 _db.StockTransactions.Add(new StockTransaction
@@ -263,6 +263,8 @@ public class InvoiceService
             {
                 ItemId = i.ItemId,
                 Description = i.Description,
+                HsnSacCode = i.HsnSacCode,
+                Unit = i.Unit,
                 Quantity = i.Quantity,
                 Rate = i.Rate,
                 GstPercent = i.GstPercent
@@ -304,6 +306,8 @@ public class InvoiceService
             {
                 ItemId = i.ItemId,
                 Description = i.Description,
+                HsnSacCode = i.HsnSacCode,
+                Unit = i.Unit,
                 Quantity = i.Quantity,
                 Rate = i.Rate,
                 GstPercent = i.GstPercent

@@ -326,7 +326,7 @@ namespace VaishnaviSolar.Api.Migrations
                     b.Property<int>("InvoiceId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ItemId")
+                    b.Property<int?>("ItemId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("Quantity")
@@ -723,7 +723,7 @@ namespace VaishnaviSolar.Api.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("ItemId")
+                    b.Property<int?>("ItemId")
                         .HasColumnType("int");
 
                     b.Property<int>("ProformaInvoiceId")
@@ -826,7 +826,11 @@ namespace VaishnaviSolar.Api.Migrations
                         .HasPrecision(5, 2)
                         .HasColumnType("decimal(5,2)");
 
-                    b.Property<int>("ItemId")
+                    b.Property<string>("HsnSacCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ItemId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("Quantity")
@@ -839,6 +843,9 @@ namespace VaishnaviSolar.Api.Migrations
                     b.Property<decimal>("Rate")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("Unit")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -907,9 +914,7 @@ namespace VaishnaviSolar.Api.Migrations
 
                     b.HasOne("VaishnaviSolar.Api.Models.Item", "Item")
                         .WithMany()
-                        .HasForeignKey("ItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ItemId");
 
                     b.Navigation("Invoice");
 
@@ -942,9 +947,7 @@ namespace VaishnaviSolar.Api.Migrations
                 {
                     b.HasOne("VaishnaviSolar.Api.Models.Item", "Item")
                         .WithMany()
-                        .HasForeignKey("ItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ItemId");
 
                     b.HasOne("VaishnaviSolar.Api.Models.ProformaInvoice", "ProformaInvoice")
                         .WithMany("Items")
@@ -972,9 +975,7 @@ namespace VaishnaviSolar.Api.Migrations
                 {
                     b.HasOne("VaishnaviSolar.Api.Models.Item", "Item")
                         .WithMany()
-                        .HasForeignKey("ItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ItemId");
 
                     b.HasOne("VaishnaviSolar.Api.Models.Quotation", "Quotation")
                         .WithMany("Items")

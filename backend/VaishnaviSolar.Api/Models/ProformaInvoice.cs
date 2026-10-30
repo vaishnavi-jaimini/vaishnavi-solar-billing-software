@@ -31,7 +31,7 @@ public class ProformaInvoiceItem
     public int Id { get; set; }
     public int ProformaInvoiceId { get; set; }
     public ProformaInvoice? ProformaInvoice { get; set; }
-    public int ItemId { get; set; }
+    public int? ItemId { get; set; }
     public Item? Item { get; set; }
     public string Description { get; set; } = string.Empty;
     public string HsnSacCode { get; set; } = string.Empty;

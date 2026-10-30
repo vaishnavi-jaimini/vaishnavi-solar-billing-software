@@ -62,7 +62,7 @@ export interface StockAdjustment {
 
 export interface QuotationItem {
   id: number;
-  itemId: number;
+  itemId: number | null;
   itemName: string;
   description: string;
   hsnSacCode: string;
@@ -104,8 +104,10 @@ export interface Quotation {
 }
 
 export interface LineItemInput {
-  itemId: number;
+  itemId: number | null;
   description?: string;
+  hsnSacCode?: string;
+  unit?: ItemUnit;
   quantity: number;
   rate: number;
   gstPercent: number;
@@ -123,7 +125,7 @@ export interface QuotationUpsert {
 
 export interface InvoiceItem {
   id: number;
-  itemId: number;
+  itemId: number | null;
   itemName: string;
   description: string;
   hsnSacCode: string;
@@ -195,7 +197,7 @@ export interface InvoiceUpsert {
 
 export interface ProformaInvoiceItem {
   id: number;
-  itemId: number;
+  itemId: number | null;
   itemName: string;
   description: string;
   hsnSacCode: string;

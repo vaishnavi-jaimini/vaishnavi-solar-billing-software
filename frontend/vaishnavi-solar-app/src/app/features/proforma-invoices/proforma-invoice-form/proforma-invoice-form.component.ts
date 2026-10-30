@@ -6,6 +6,7 @@ import { forkJoin } from 'rxjs';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -17,6 +18,7 @@ import { ItemService } from '../../../core/services/item.service';
 import { ProformaInvoiceService } from '../../../core/services/proforma-invoice.service';
 import { CompanyService } from '../../../core/services/company.service';
 import { Customer, Item, ProformaInvoice } from '../../../core/models/models';
+import { ItemUnit } from '../../../core/models/enums';
 import { gstRateRows, GstRateRow } from '../../../core/utils/gst-breakup';
 
 @Component({
@@ -29,6 +31,7 @@ import { gstRateRows, GstRateRow } from '../../../core/utils/gst-breakup';
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
+    MatAutocompleteModule,
     MatButtonModule,
     MatIconModule,
     MatDatepickerModule,
@@ -46,6 +49,7 @@ export class ProformaInvoiceFormComponent implements OnInit {
   viewColumns: string[] = ['item', 'hsn', 'qty', 'rate', 'cgst', 'sgst', 'igst', 'amount'];
   customers: Customer[] = [];
   items: Item[] = [];
+  units = Object.values(ItemUnit);
   companyState = '';
   saving = false;
 
@@ -139,6 +143,8 @@ export class ProformaInvoiceFormComponent implements OnInit {
       this.lines.at(this.lines.length - 1).patchValue({
         itemId: l.itemId,
         description: l.description,
+        hsnSacCode: l.hsnSacCode,
+        unit: l.unit,
         quantity: l.quantity,
         rate: l.rate,
         gstPercent: l.gstPercent
@@ -149,8 +155,10 @@ export class ProformaInvoiceFormComponent implements OnInit {
   addLine(): void {
     this.lines.push(
       this.fb.group({
-        itemId: [null, Validators.required],
-        description: [''],
+        itemId: [null as number | null],
+        description: ['', Validators.required],
+        hsnSacCode: [''],
+        unit: [ItemUnit.Nos],
         quantity: [1, [Validators.required, Validators.min(0.001)]],
         rate: [0, [Validators.required, Validators.min(0)]],
         gstPercent: [18, [Validators.required, Validators.min(0)]]
@@ -162,15 +170,29 @@ export class ProformaInvoiceFormComponent implements OnInit {
     this.lines.removeAt(i);
   }
 
-  onItemSelected(i: number): void {
-    const itemId = this.lines.at(i).get('itemId')?.value;
-    const item = this.items.find((x) => x.id === itemId);
-    if (item) {
-      this.lines.at(i).patchValue({
-        rate: item.rate,
-        gstPercent: item.gstPercent,
-        description: item.name
-      });
+  // Stored items are only suggestions: the product, HSN, unit, rate and GST can all be typed in by hand.
+  matchingItems(i: number): Item[] {
+    const typed = (this.lines.at(i).get('description')?.value || '').trim().toLowerCase();
+    return this.items.filter((it) => it.name.toLowerCase().includes(typed)).slice(0, 10);
+  }
+
+  onItemPicked(i: number, item: Item): void {
+    this.lines.at(i).patchValue({
+      itemId: item.id,
+      description: item.name,
+      hsnSacCode: item.hsnSacCode,
+      unit: item.unit,
+      rate: item.rate,
+      gstPercent: item.gstPercent
+    });
+  }
+
+  // Once the name no longer matches the picked item, the line is a typed-in product and stops tracking that item's stock.
+  onProductTyped(i: number): void {
+    const line = this.lines.at(i);
+    const item = this.items.find((x) => x.id === line.get('itemId')?.value);
+    if (item && item.name !== line.get('description')?.value) {
+      line.patchValue({ itemId: null });
     }
   }
 

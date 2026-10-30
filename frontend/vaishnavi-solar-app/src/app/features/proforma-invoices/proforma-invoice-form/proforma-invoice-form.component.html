@@ -167,18 +167,31 @@
       @for (line of lines.controls; track line; let i = $index) {
         <div [formGroupName]="i" class="line-row">
           <mat-form-field appearance="outline" class="line-item">
-            <mat-label>Item</mat-label>
-            <mat-select formControlName="itemId" (selectionChange)="onItemSelected(i)">
-              @for (it of items; track it.id) {
-                <mat-option [value]="it.id">
+            <mat-label>Product</mat-label>
+            <input matInput formControlName="description" [matAutocomplete]="productAuto" (input)="onProductTyped(i)" />
+            <mat-autocomplete #productAuto="matAutocomplete">
+              @for (it of matchingItems(i); track it.id) {
+                <mat-option [value]="it.name" (onSelectionChange)="$event.isUserInput && onItemPicked(i, it)">
                   {{ it.name }} @if (!it.isService) { ({{ it.currentStock }} in stock) }
                 </mat-option>
               }
-            </mat-select>
+            </mat-autocomplete>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="line-hsn">
+            <mat-label>HSN/SAC</mat-label>
+            <input matInput formControlName="hsnSacCode" />
           </mat-form-field>
           <mat-form-field appearance="outline" class="line-qty">
             <mat-label>Qty</mat-label>
             <input matInput type="number" formControlName="quantity" />
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="line-unit">
+            <mat-label>Unit</mat-label>
+            <mat-select formControlName="unit">
+              @for (u of units; track u) {
+                <mat-option [value]="u">{{ u }}</mat-option>
+              }
+            </mat-select>
           </mat-form-field>
           <mat-form-field appearance="outline" class="line-rate">
             <mat-label>Rate</mat-label>

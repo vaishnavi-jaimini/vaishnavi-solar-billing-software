@@ -76,15 +76,16 @@ public class QuotationService
         decimal subtotal = 0, totalGst = 0;
         foreach (var line in lines)
         {
-            var item = await _db.Items.FindAsync(line.ItemId)
-                ?? throw new InvalidOperationException($"Item {line.ItemId} not found");
+            var (item, description, hsn, unit) = await LineDetails.ResolveAsync(_db, line.ItemId, line.Description, line.HsnSacCode, line.Unit);
             decimal amount = line.Quantity * line.Rate;
             decimal gst = Math.Round(amount * line.GstPercent / 100, 2);
 
             quotation.Items.Add(new QuotationItem
             {
-                ItemId = item.Id,
-                Description = string.IsNullOrWhiteSpace(line.Description) ? item.Name : line.Description,
+                ItemId = item?.Id,
+                Description = description,
+                HsnSacCode = hsn,
+                Unit = unit,
                 Quantity = line.Quantity,
                 Rate = line.Rate,
                 GstPercent = line.GstPercent,

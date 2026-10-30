@@ -78,8 +78,7 @@ public class ProformaInvoiceService
 
         foreach (var line in dto.Items)
         {
-            var item = await _db.Items.FindAsync(line.ItemId)
-                ?? throw new InvalidOperationException($"Item {line.ItemId} not found");
+            var (item, description, hsn, unit) = await LineDetails.ResolveAsync(_db, line.ItemId, line.Description, line.HsnSacCode, line.Unit);
 
             decimal amount = line.Quantity * line.Rate;
             decimal gstAmount = Math.Round(amount * line.GstPercent / 100, 2);
@@ -96,11 +95,11 @@ public class ProformaInvoiceService
 
             proforma.Items.Add(new ProformaInvoiceItem
             {
-                ItemId = item.Id,
-                Description = string.IsNullOrWhiteSpace(line.Description) ? item.Name : line.Description,
-                HsnSacCode = item.HsnSacCode,
+                ItemId = item?.Id,
+                Description = description,
+                HsnSacCode = hsn,
                 Quantity = line.Quantity,
-                Unit = item.Unit,
+                Unit = unit,
                 Rate = line.Rate,
                 GstPercent = line.GstPercent,
                 CgstAmount = cgst,

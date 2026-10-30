@@ -87,6 +87,17 @@ using (var scope = app.Services.CreateScope())
             "IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'Companies' AND column_name = 'NextQuotationNumber') THEN " +
             "ALTER TABLE \"Companies\" ADD COLUMN \"NextQuotationNumber\" integer NOT NULL DEFAULT 1; " +
             "UPDATE \"Companies\" SET \"NextQuotationNumber\" = (SELECT COUNT(*) FROM \"Quotations\") + 1; " +
+            "END IF; END $$; " +
+            // Line items can be typed in by hand, so they no longer need a stored item.
+            "ALTER TABLE \"QuotationItems\" ALTER COLUMN \"ItemId\" DROP NOT NULL; " +
+            "ALTER TABLE \"ProformaInvoiceItems\" ALTER COLUMN \"ItemId\" DROP NOT NULL; " +
+            "ALTER TABLE \"InvoiceItems\" ALTER COLUMN \"ItemId\" DROP NOT NULL; " +
+            // Quotation lines now keep their own HSN and unit; existing lines copy them from their item once.
+            "DO $$ BEGIN " +
+            "IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'QuotationItems' AND column_name = 'HsnSacCode') THEN " +
+            "ALTER TABLE \"QuotationItems\" ADD COLUMN \"HsnSacCode\" text NOT NULL DEFAULT ''; " +
+            "ALTER TABLE \"QuotationItems\" ADD COLUMN \"Unit\" integer NOT NULL DEFAULT 0; " +
+            "UPDATE \"QuotationItems\" qi SET \"HsnSacCode\" = i.\"HsnSacCode\", \"Unit\" = i.\"Unit\" FROM \"Items\" i WHERE i.\"Id\" = qi.\"ItemId\"; " +
             "END IF; END $$;");
     }
     else

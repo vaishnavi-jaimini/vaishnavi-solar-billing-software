@@ -5,7 +5,7 @@ namespace VaishnaviSolar.Api.DTOs;
 public class ProformaInvoiceItemDto
 {
     public int Id { get; set; }
-    public int ItemId { get; set; }
+    public int? ItemId { get; set; }
     public string ItemName { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public string HsnSacCode { get; set; } = string.Empty;

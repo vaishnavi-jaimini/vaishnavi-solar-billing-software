@@ -5,7 +5,7 @@ namespace VaishnaviSolar.Api.DTOs;
 public class QuotationItemDto
 {
     public int Id { get; set; }
-    public int ItemId { get; set; }
+    public int? ItemId { get; set; }
     public string ItemName { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public string HsnSacCode { get; set; } = string.Empty;
@@ -49,8 +49,10 @@ public class QuotationDto
 
 public class QuotationItemInputDto
 {
-    public int ItemId { get; set; }
+    public int? ItemId { get; set; }
     public string? Description { get; set; }
+    public string? HsnSacCode { get; set; }
+    public ItemUnit? Unit { get; set; }
     public decimal Quantity { get; set; }
     public decimal Rate { get; set; }
     public decimal GstPercent { get; set; }
