@@ -5,6 +5,9 @@
       <div class="header-actions">
         <a mat-stroked-button [routerLink]="['/invoices', inv.id, 'edit']"><mat-icon>edit</mat-icon> Edit</a>
         <a mat-stroked-button [routerLink]="['/invoices', inv.id, 'print']"><mat-icon>print</mat-icon> Print</a>
+        <a mat-stroked-button routerLink="/delivery-challans/new" [queryParams]="{ invoiceId: inv.id }">
+          <mat-icon>local_shipping</mat-icon> Delivery Challan
+        </a>
         <a mat-button routerLink="/invoices"><mat-icon>arrow_back</mat-icon> Back</a>
       </div>
     </div>

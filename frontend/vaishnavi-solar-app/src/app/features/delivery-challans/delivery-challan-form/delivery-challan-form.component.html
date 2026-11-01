@@ -1,0 +1,257 @@
+@if (viewMode) {
+  @if (viewChallan; as c) {
+    <div class="page-header">
+      <h1>Delivery Challan {{ c.challanNumber }}</h1>
+      <div class="header-actions">
+        <a mat-stroked-button [routerLink]="['/delivery-challans', c.id, 'edit']"><mat-icon>edit</mat-icon> Edit</a>
+        <a mat-stroked-button [routerLink]="['/delivery-challans', c.id, 'print']"><mat-icon>print</mat-icon> Print</a>
+        <a mat-button routerLink="/delivery-challans"><mat-icon>arrow_back</mat-icon> Back</a>
+      </div>
+    </div>
+    <div class="view-meta">
+      <div><strong>Date:</strong> {{ c.challanDate | date: 'dd-MMM-yyyy' }}</div>
+      @if (c.referenceNo) {
+        <div><strong>Invoice / PO Ref:</strong> {{ c.referenceNo }}</div>
+      }
+      @if (c.transporterName) {
+        <div><strong>Transporter / Driver:</strong> {{ c.transporterName }}</div>
+      }
+      @if (c.vehicleNumber) {
+        <div><strong>Vehicle No:</strong> {{ c.vehicleNumber }}</div>
+      }
+      @if (c.lrNumber) {
+        <div><strong>LR No:</strong> {{ c.lrNumber }}</div>
+      }
+      @if (c.ewayBillNumber) {
+        <div><strong>E-way Bill No:</strong> {{ c.ewayBillNumber }}</div>
+      }
+    </div>
+    <div class="parties-row">
+      <div class="party-box">
+        <div class="party-label">Bill To</div>
+        <div class="party-name">{{ c.customerName }}</div>
+        <div class="party-detail address-lines">{{ c.customerAddress }}</div>
+        <div class="party-detail">{{ c.customerCity }}, {{ c.customerState }} @if (c.customerPincode) { - {{ c.customerPincode }} }</div>
+        @if (c.customerGstin) {
+          <div class="party-detail">GSTIN: {{ c.customerGstin }}</div>
+        }
+        <div class="party-detail">Place of Supply: {{ c.placeOfSupply }}</div>
+      </div>
+      <div class="party-box">
+        <div class="party-label">Ship To</div>
+        <div class="party-name">{{ c.shipToName }}</div>
+        <div class="party-detail address-lines">{{ c.shipToAddress }}</div>
+        <div class="party-detail">{{ c.shipToCity }}, {{ c.shipToState }} @if (c.shipToPincode) { - {{ c.shipToPincode }} }</div>
+      </div>
+    </div>
+    <table mat-table [dataSource]="c.items" class="mat-elevation-z1">
+      <ng-container matColumnDef="item">
+        <th mat-header-cell *matHeaderCellDef>Item</th>
+        <td mat-cell *matCellDef="let l">{{ l.description }}</td>
+      </ng-container>
+      <ng-container matColumnDef="hsn">
+        <th mat-header-cell *matHeaderCellDef>HSN/SAC</th>
+        <td mat-cell *matCellDef="let l">{{ l.hsnSacCode }}</td>
+      </ng-container>
+      <ng-container matColumnDef="qty">
+        <th mat-header-cell *matHeaderCellDef>Qty</th>
+        <td mat-cell *matCellDef="let l">{{ l.quantity }} {{ l.unit }}</td>
+      </ng-container>
+      <ng-container matColumnDef="rate">
+        <th mat-header-cell *matHeaderCellDef>Rate</th>
+        <td mat-cell *matCellDef="let l">₹{{ l.rate | number: '1.2-2' }}</td>
+      </ng-container>
+      <ng-container matColumnDef="cgst">
+        <th mat-header-cell *matHeaderCellDef>CGST</th>
+        <td mat-cell *matCellDef="let l">
+          @if (l.cgstAmount > 0) { ₹{{ l.cgstAmount | number: '1.2-2' }} ({{ l.gstPercent / 2 }}%) } @else { — }
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="sgst">
+        <th mat-header-cell *matHeaderCellDef>SGST</th>
+        <td mat-cell *matCellDef="let l">
+          @if (l.sgstAmount > 0) { ₹{{ l.sgstAmount | number: '1.2-2' }} ({{ l.gstPercent / 2 }}%) } @else { — }
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="igst">
+        <th mat-header-cell *matHeaderCellDef>IGST</th>
+        <td mat-cell *matCellDef="let l">
+          @if (l.igstAmount > 0) { ₹{{ l.igstAmount | number: '1.2-2' }} ({{ l.gstPercent }}%) } @else { — }
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="amount">
+        <th mat-header-cell *matHeaderCellDef>Amount</th>
+        <td mat-cell *matCellDef="let l">₹{{ l.amount | number: '1.2-2' }}</td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="viewColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: viewColumns"></tr>
+    </table>
+    <div class="totals">
+      <div>Subtotal: ₹{{ c.subtotal | number: '1.2-2' }}</div>
+      @for (row of gstRows(c); track row.label) {
+        <div>{{ row.label }}: ₹{{ row.amount | number: '1.2-2' }}</div>
+      }
+      <div class="grand">Total Value: ₹{{ c.grandTotal | number: '1.2-2' }}</div>
+    </div>
+  }
+} @else {
+  <div class="page-header">
+    <h1>{{ editId ? 'Edit Delivery Challan ' + editNumber : 'New Delivery Challan' }}</h1>
+    <a mat-button routerLink="/delivery-challans"><mat-icon>arrow_back</mat-icon> Back</a>
+  </div>
+
+  <form [formGroup]="form">
+    <div class="spacer-row">
+      @if (editId) {
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Challan Number</mat-label>
+          <input matInput formControlName="challanNumber" />
+        </mat-form-field>
+      }
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Customer</mat-label>
+        <mat-select formControlName="customerId" (selectionChange)="onCustomerSelected()">
+          @for (c of customers; track c.id) {
+            <mat-option [value]="c.id">{{ c.name }} — {{ c.city }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Challan Date</mat-label>
+        <input matInput [matDatepicker]="datePicker" formControlName="challanDate" />
+        <mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
+        <mat-datepicker #datePicker></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Invoice / PO Reference</mat-label>
+        <input matInput formControlName="referenceNo" />
+      </mat-form-field>
+    </div>
+
+    @if (form.get('customerId')?.value) {
+      <div class="gst-note">
+        {{ isInterState ? 'Inter-state supply — IGST will apply.' : 'Intra-state supply — CGST + SGST will apply.' }}
+      </div>
+    }
+
+    <h3>Transport Details</h3>
+    <div class="spacer-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Transporter / Driver</mat-label>
+        <input matInput formControlName="transporterName" />
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Vehicle Number</mat-label>
+        <input matInput formControlName="vehicleNumber" />
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>LR / Docket Number</mat-label>
+        <input matInput formControlName="lrNumber" />
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>E-way Bill Number</mat-label>
+        <input matInput formControlName="ewayBillNumber" />
+      </mat-form-field>
+    </div>
+
+    <h3>Ship To</h3>
+    <mat-checkbox
+      formControlName="shipSameAsBilling"
+      (change)="onShipSameAsBillingChange($event.checked)"
+    >
+      Same as billing address
+    </mat-checkbox>
+
+    @if (!form.get('shipSameAsBilling')?.value) {
+      <div class="spacer-row ship-to-row">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Ship To Name</mat-label>
+          <input matInput formControlName="shipToName" />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Address</mat-label>
+          <input matInput formControlName="shipToAddress" />
+        </mat-form-field>
+      </div>
+      <div class="spacer-row">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>City</mat-label>
+          <input matInput formControlName="shipToCity" />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>State</mat-label>
+          <input matInput formControlName="shipToState" />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Pincode</mat-label>
+          <input matInput formControlName="shipToPincode" />
+        </mat-form-field>
+      </div>
+    }
+
+    <h3>Items</h3>
+    <div formArrayName="lines">
+      @for (line of lines.controls; track line; let i = $index) {
+        <div [formGroupName]="i" class="line-row">
+          <mat-form-field appearance="outline" class="line-item">
+            <mat-label>Product</mat-label>
+            <input matInput formControlName="description" [matAutocomplete]="productAuto" (input)="onProductTyped(i)" />
+            <mat-autocomplete #productAuto="matAutocomplete">
+              @for (it of matchingItems(i); track it.id) {
+                <mat-option [value]="it.name" (onSelectionChange)="$event.isUserInput && onItemPicked(i, it)">
+                  {{ it.name }} @if (!it.isService) { ({{ it.currentStock }} in stock) }
+                </mat-option>
+              }
+            </mat-autocomplete>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="line-hsn">
+            <mat-label>HSN/SAC</mat-label>
+            <input matInput formControlName="hsnSacCode" />
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="line-qty">
+            <mat-label>Qty</mat-label>
+            <input matInput type="number" formControlName="quantity" />
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="line-unit">
+            <mat-label>Unit</mat-label>
+            <mat-select formControlName="unit">
+              @for (u of units; track u) {
+                <mat-option [value]="u">{{ u }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="line-rate">
+            <mat-label>Rate</mat-label>
+            <input matInput type="number" formControlName="rate" />
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="line-gst">
+            <mat-label>GST %</mat-label>
+            <input matInput type="number" formControlName="gstPercent" />
+          </mat-form-field>
+          <div class="line-amount">₹{{ lineAmount(i) | number: '1.2-2' }}</div>
+          <button mat-icon-button type="button" (click)="removeLine(i)"><mat-icon>delete</mat-icon></button>
+        </div>
+      }
+    </div>
+    <button mat-stroked-button type="button" (click)="addLine()">
+      <mat-icon>add</mat-icon> Add Item
+    </button>
+
+    <mat-form-field appearance="outline" class="full-width notes-field">
+      <mat-label>Notes</mat-label>
+      <textarea matInput formControlName="notes" rows="2"></textarea>
+    </mat-form-field>
+
+    <div class="totals">
+      <div>Subtotal: ₹{{ subtotal | number: '1.2-2' }}</div>
+      @for (row of formGstRows; track row.label) {
+        <div>{{ row.label }}: ₹{{ row.amount | number: '1.2-2' }}</div>
+      }
+      <div class="grand">Total Value: ₹{{ grandTotal | number: '1.2-2' }}</div>
+    </div>
+
+    <button mat-flat-button color="primary" type="button" [disabled]="saving" (click)="save()">
+      {{ editId ? 'Update Delivery Challan' : 'Save Delivery Challan' }}
+    </button>
+  </form>
+}

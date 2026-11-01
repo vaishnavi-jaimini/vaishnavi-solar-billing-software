@@ -101,6 +101,41 @@ export const routes: Routes = [
       )
   },
   {
+    path: 'delivery-challans',
+    loadComponent: () =>
+      import('./features/delivery-challans/delivery-challan-list/delivery-challan-list.component').then(
+        (m) => m.DeliveryChallanListComponent
+      )
+  },
+  {
+    path: 'delivery-challans/new',
+    loadComponent: () =>
+      import('./features/delivery-challans/delivery-challan-form/delivery-challan-form.component').then(
+        (m) => m.DeliveryChallanFormComponent
+      )
+  },
+  {
+    path: 'delivery-challans/:id',
+    loadComponent: () =>
+      import('./features/delivery-challans/delivery-challan-form/delivery-challan-form.component').then(
+        (m) => m.DeliveryChallanFormComponent
+      )
+  },
+  {
+    path: 'delivery-challans/:id/edit',
+    loadComponent: () =>
+      import('./features/delivery-challans/delivery-challan-form/delivery-challan-form.component').then(
+        (m) => m.DeliveryChallanFormComponent
+      )
+  },
+  {
+    path: 'delivery-challans/:id/print',
+    loadComponent: () =>
+      import('./features/delivery-challans/delivery-challan-print/delivery-challan-print.component').then(
+        (m) => m.DeliveryChallanPrintComponent
+      )
+  },
+  {
     path: 'payments',
     loadComponent: () =>
       import('./features/payments/payment-list/payment-list.component').then((m) => m.PaymentListComponent)

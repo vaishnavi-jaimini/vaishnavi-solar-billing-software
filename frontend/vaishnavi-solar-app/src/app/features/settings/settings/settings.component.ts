@@ -40,7 +40,9 @@ export class SettingsComponent implements OnInit {
     quotationPrefix: ['VS/SL###/2026-27', Validators.required],
     nextQuotationNumber: [1, [Validators.required, Validators.min(1)]],
     proformaPrefix: ['PRO-', Validators.required],
-    nextProformaNumber: [1, [Validators.required, Validators.min(1)]]
+    nextProformaNumber: [1, [Validators.required, Validators.min(1)]],
+    deliveryChallanPrefix: ['DC-', Validators.required],
+    nextDeliveryChallanNumber: [1, [Validators.required, Validators.min(1)]]
   });
 
   constructor(

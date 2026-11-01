@@ -96,12 +96,13 @@ public class ItemsController : ControllerBase
     {
         var i = await _db.Items.FindAsync(id);
         if (i == null) return NotFound();
-        bool used = await _db.InvoiceItems.AnyAsync(x => x.ItemId == id) || await _db.QuotationItems.AnyAsync(x => x.ItemId == id);
+        bool used = await _db.InvoiceItems.AnyAsync(x => x.ItemId == id) || await _db.QuotationItems.AnyAsync(x => x.ItemId == id)
+            || await _db.DeliveryChallanItems.AnyAsync(x => x.ItemId == id);
         if (used)
         {
             i.IsActive = false;
             await _db.SaveChangesAsync();
-            return Ok(new { message = "Item is used in invoices/quotations, marked inactive instead of deleted." });
+            return Ok(new { message = "Item is used in invoices/quotations/challans, marked inactive instead of deleted." });
         }
         _db.Items.Remove(i);
         await _db.SaveChangesAsync();

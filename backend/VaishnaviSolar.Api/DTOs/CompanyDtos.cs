@@ -22,4 +22,6 @@ public class CompanyDto
     public int NextQuotationNumber { get; set; } = 1;
     public string ProformaPrefix { get; set; } = "PRO-";
     public int NextProformaNumber { get; set; } = 1;
+    public string DeliveryChallanPrefix { get; set; } = "DC-";
+    public int NextDeliveryChallanNumber { get; set; } = 1;
 }

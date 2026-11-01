@@ -1,0 +1,169 @@
+<div class="print-toolbar no-print">
+  <a mat-button routerLink="/delivery-challans"><mat-icon>arrow_back</mat-icon> Back</a>
+  <div class="toolbar-actions">
+    <mat-checkbox [checked]="showValues" (change)="showValues = $event.checked">Show prices and tax</mat-checkbox>
+    <button mat-flat-button color="primary" (click)="print()"><mat-icon>print</mat-icon> Print</button>
+  </div>
+</div>
+
+@if (challan; as challan) {
+  @if (company; as company) {
+    @for (copy of copies; track copy) {
+      <div class="invoice-sheet">
+        <div class="invoice-header">
+          <div>
+            <img class="company-logo" src="/images/vaishnavi-solar-logo.png" alt="{{ company.name }}" />
+            <div class="company-detail address-lines">{{ company.address }}</div>
+            <div class="company-detail">{{ company.city }}, {{ company.state }} - {{ company.pincode }}</div>
+            <div class="company-detail">GSTIN: {{ company.gstin || '—' }}</div>
+            <div class="company-detail">Phone: {{ company.phone }} | Email: {{ company.email }}</div>
+          </div>
+          <div class="invoice-title-block">
+            <div class="invoice-title">DELIVERY CHALLAN</div>
+            <div class="copy-label">{{ copy }}</div>
+            <div class="invoice-number">{{ challan.challanNumber }}</div>
+            <div class="invoice-date">Date: {{ challan.challanDate | date: 'dd-MMM-yyyy' }}</div>
+            @if (challan.referenceNo) {
+              <div class="invoice-date">Invoice / PO Ref: {{ challan.referenceNo }}</div>
+            }
+          </div>
+        </div>
+
+        <div class="parties">
+          <div class="party-box">
+            <div class="party-label">Consignee (Bill To)</div>
+            <div class="party-name">{{ challan.customerName }}</div>
+            <div class="party-detail address-lines">{{ challan.customerAddress }}</div>
+            <div class="party-detail">{{ challan.customerCity }}, {{ challan.customerState }} @if (challan.customerPincode) { - {{ challan.customerPincode }} }</div>
+            @if (challan.customerGstin) {
+              <div class="party-detail">GSTIN: {{ challan.customerGstin }}</div>
+            }
+            @if (challan.customerPhone) {
+              <div class="party-detail">Phone: {{ challan.customerPhone }}</div>
+            }
+            <div class="party-detail">Place of Supply: {{ challan.placeOfSupply }}</div>
+          </div>
+          <div class="party-box">
+            <div class="party-label">Deliver To (Ship To)</div>
+            <div class="party-name">{{ challan.shipToName }}</div>
+            <div class="party-detail address-lines">{{ challan.shipToAddress }}</div>
+            <div class="party-detail">{{ challan.shipToCity }}, {{ challan.shipToState }} @if (challan.shipToPincode) { - {{ challan.shipToPincode }} }</div>
+          </div>
+          <div class="party-box">
+            <div class="party-label">Transport Details</div>
+            <div class="party-detail">Transporter / Driver: {{ challan.transporterName || '—' }}</div>
+            <div class="party-detail">Vehicle No: {{ challan.vehicleNumber || '—' }}</div>
+            <div class="party-detail">LR / Docket No: {{ challan.lrNumber || '—' }}</div>
+            <div class="party-detail">E-way Bill No: {{ challan.ewayBillNumber || '—' }}</div>
+          </div>
+        </div>
+
+        <table class="items-table">
+          @if (showValues) {
+            <colgroup>
+              <col style="width: 4%" />
+              <col style="width: 22%" />
+              <col style="width: 9%" />
+              <col style="width: 7%" />
+              <col style="width: 10%" />
+              <col style="width: 12%" />
+              <col style="width: 12%" />
+              <col style="width: 12%" />
+              <col style="width: 12%" />
+            </colgroup>
+          } @else {
+            <colgroup>
+              <col style="width: 6%" />
+              <col style="width: 64%" />
+              <col style="width: 15%" />
+              <col style="width: 15%" />
+            </colgroup>
+          }
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Description</th>
+              <th>HSN/SAC</th>
+              <th>Qty</th>
+              @if (showValues) {
+                <th>Rate</th>
+                <th>CGST</th>
+                <th>SGST</th>
+                <th>IGST</th>
+                <th>Amount</th>
+              }
+            </tr>
+          </thead>
+          <tbody>
+            @for (line of challan.items; track line.id; let i = $index) {
+              <tr>
+                <td>{{ i + 1 }}</td>
+                <td>{{ line.description }}</td>
+                <td>{{ line.hsnSacCode }}</td>
+                <td>{{ line.quantity }} {{ line.unit }}</td>
+                @if (showValues) {
+                  <td>₹{{ line.rate | number: '1.2-2' }}</td>
+                  <td>
+                    @if (line.cgstAmount > 0) { ₹{{ line.cgstAmount | number: '1.2-2' }} ({{ line.gstPercent / 2 }}%) } @else { — }
+                  </td>
+                  <td>
+                    @if (line.sgstAmount > 0) { ₹{{ line.sgstAmount | number: '1.2-2' }} ({{ line.gstPercent / 2 }}%) } @else { — }
+                  </td>
+                  <td>
+                    @if (line.igstAmount > 0) { ₹{{ line.igstAmount | number: '1.2-2' }} ({{ line.gstPercent }}%) } @else { — }
+                  </td>
+                  <td>₹{{ line.amount | number: '1.2-2' }}</td>
+                }
+              </tr>
+            }
+          </tbody>
+        </table>
+
+        @if (showValues) {
+          <div class="summary-block">
+            <table class="totals-table">
+              <tr>
+                <td>Subtotal</td>
+                <td>₹{{ challan.subtotal | number: '1.2-2' }}</td>
+              </tr>
+              @for (row of gstRows(challan); track row.label) {
+                <tr>
+                  <td>{{ row.label }}</td>
+                  <td>₹{{ row.amount | number: '1.2-2' }}</td>
+                </tr>
+              }
+              <tr class="grand-row">
+                <td>Total Value</td>
+                <td>₹{{ challan.grandTotal | number: '1.2-2' }}</td>
+              </tr>
+            </table>
+          </div>
+        }
+
+        <div class="declaration">
+          <div class="party-label">Declaration</div>
+          <p>The goods listed above are sent for delivery to the consignee. This challan is not a tax invoice.</p>
+          @if (challan.notes) {
+            <div class="party-label notes-label">Notes</div>
+            <p>{{ challan.notes }}</p>
+          }
+        </div>
+
+        <div class="footer">
+          <div class="signature receiver">
+            <div>Received the above goods in good condition</div>
+            <div class="signature-space"></div>
+            <div>Receiver's Name, Signature &amp; Date</div>
+          </div>
+          <div class="signature">
+            <div class="signature-line">For {{ company.name }}</div>
+            <div class="signature-space"></div>
+            <div>Authorized Signatory</div>
+          </div>
+        </div>
+      </div>
+    }
+  }
+} @else {
+  <p class="no-print">Loading delivery challan…</p>
+}

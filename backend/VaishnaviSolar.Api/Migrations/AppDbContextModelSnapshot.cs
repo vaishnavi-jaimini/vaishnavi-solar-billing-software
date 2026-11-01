@@ -58,6 +58,10 @@ namespace VaishnaviSolar.Api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("DeliveryChallanPrefix")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -73,6 +77,9 @@ namespace VaishnaviSolar.Api.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("NextDeliveryChallanNumber")
+                        .HasColumnType("int");
 
                     b.Property<int>("NextInvoiceNumber")
                         .HasColumnType("int");
@@ -118,10 +125,12 @@ namespace VaishnaviSolar.Api.Migrations
                             BankIfsc = "",
                             BankName = "",
                             City = "",
+                            DeliveryChallanPrefix = "DC-",
                             Email = "",
                             Gstin = "",
                             InvoicePrefix = "INV-",
                             Name = "Vaishnavi Solar",
+                            NextDeliveryChallanNumber = 1,
                             NextInvoiceNumber = 1,
                             NextProformaNumber = 1,
                             NextQuotationNumber = 1,
@@ -178,6 +187,170 @@ namespace VaishnaviSolar.Api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Customers");
+                });
+
+            modelBuilder.Entity("VaishnaviSolar.Api.Models.DeliveryChallan", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("CgstAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("ChallanDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ChallanNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("EwayBillNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("GrandTotal")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("IgstAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<bool>("IsInterState")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LrNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PlaceOfSupply")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ReferenceNo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("SgstAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("ShipToAddress")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ShipToCity")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ShipToName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ShipToPincode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ShipToState")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Subtotal")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("TotalGst")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("TransporterName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("VehicleNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChallanNumber")
+                        .IsUnique();
+
+                    b.HasIndex("CustomerId");
+
+                    b.ToTable("DeliveryChallans");
+                });
+
+            modelBuilder.Entity("VaishnaviSolar.Api.Models.DeliveryChallanItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("CgstAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("DeliveryChallanId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("GstPercent")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<string>("HsnSacCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("IgstAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int?>("ItemId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Quantity")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<decimal>("Rate")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("SgstAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("Unit")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DeliveryChallanId");
+
+                    b.HasIndex("ItemId");
+
+                    b.ToTable("DeliveryChallanItems");
                 });
 
             modelBuilder.Entity("VaishnaviSolar.Api.Models.Invoice", b =>
@@ -893,6 +1066,34 @@ namespace VaishnaviSolar.Api.Migrations
                     b.ToTable("StockTransactions");
                 });
 
+            modelBuilder.Entity("VaishnaviSolar.Api.Models.DeliveryChallan", b =>
+                {
+                    b.HasOne("VaishnaviSolar.Api.Models.Customer", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+                });
+
+            modelBuilder.Entity("VaishnaviSolar.Api.Models.DeliveryChallanItem", b =>
+                {
+                    b.HasOne("VaishnaviSolar.Api.Models.DeliveryChallan", "DeliveryChallan")
+                        .WithMany("Items")
+                        .HasForeignKey("DeliveryChallanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VaishnaviSolar.Api.Models.Item", "Item")
+                        .WithMany()
+                        .HasForeignKey("ItemId");
+
+                    b.Navigation("DeliveryChallan");
+
+                    b.Navigation("Item");
+                });
+
             modelBuilder.Entity("VaishnaviSolar.Api.Models.Invoice", b =>
                 {
                     b.HasOne("VaishnaviSolar.Api.Models.Customer", "Customer")
@@ -1004,6 +1205,11 @@ namespace VaishnaviSolar.Api.Migrations
                     b.Navigation("Invoices");
 
                     b.Navigation("Quotations");
+                });
+
+            modelBuilder.Entity("VaishnaviSolar.Api.Models.DeliveryChallan", b =>
+                {
+                    b.Navigation("Items");
                 });
 
             modelBuilder.Entity("VaishnaviSolar.Api.Models.Invoice", b =>

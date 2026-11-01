@@ -42,6 +42,7 @@ export class AppComponent {
     { label: 'Quotations', icon: 'request_quote', route: '/quotations' },
     { label: 'Proforma Invoices', icon: 'description', route: '/proforma-invoices' },
     { label: 'Invoices', icon: 'receipt_long', route: '/invoices' },
+    { label: 'Delivery Challans', icon: 'local_shipping', route: '/delivery-challans' },
     { label: 'Payments', icon: 'payments', route: '/payments' },
     { label: 'Reports', icon: 'bar_chart', route: '/reports' },
     { label: 'Settings', icon: 'settings', route: '/settings' }

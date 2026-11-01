@@ -18,6 +18,8 @@ public class AppDbContext : DbContext
     public DbSet<Payment> Payments => Set<Payment>();
     public DbSet<ProformaInvoice> ProformaInvoices => Set<ProformaInvoice>();
     public DbSet<ProformaInvoiceItem> ProformaInvoiceItems => Set<ProformaInvoiceItem>();
+    public DbSet<DeliveryChallan> DeliveryChallans => Set<DeliveryChallan>();
+    public DbSet<DeliveryChallanItem> DeliveryChallanItems => Set<DeliveryChallanItem>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -97,6 +99,29 @@ public class AppDbContext : DbContext
             e.Property(x => x.GrandTotal).HasPrecision(18, 2);
             e.HasOne(x => x.Customer).WithMany().HasForeignKey(x => x.CustomerId).OnDelete(DeleteBehavior.Restrict);
             e.HasIndex(x => x.ProformaNumber).IsUnique();
+        });
+
+        modelBuilder.Entity<DeliveryChallanItem>(e =>
+        {
+            e.Property(x => x.Quantity).HasPrecision(18, 3);
+            e.Property(x => x.Rate).HasPrecision(18, 2);
+            e.Property(x => x.GstPercent).HasPrecision(5, 2);
+            e.Property(x => x.CgstAmount).HasPrecision(18, 2);
+            e.Property(x => x.SgstAmount).HasPrecision(18, 2);
+            e.Property(x => x.IgstAmount).HasPrecision(18, 2);
+            e.Property(x => x.Amount).HasPrecision(18, 2);
+        });
+
+        modelBuilder.Entity<DeliveryChallan>(e =>
+        {
+            e.Property(x => x.Subtotal).HasPrecision(18, 2);
+            e.Property(x => x.CgstAmount).HasPrecision(18, 2);
+            e.Property(x => x.SgstAmount).HasPrecision(18, 2);
+            e.Property(x => x.IgstAmount).HasPrecision(18, 2);
+            e.Property(x => x.TotalGst).HasPrecision(18, 2);
+            e.Property(x => x.GrandTotal).HasPrecision(18, 2);
+            e.HasOne(x => x.Customer).WithMany().HasForeignKey(x => x.CustomerId).OnDelete(DeleteBehavior.Restrict);
+            e.HasIndex(x => x.ChallanNumber).IsUnique();
         });
 
         modelBuilder.Entity<Company>()

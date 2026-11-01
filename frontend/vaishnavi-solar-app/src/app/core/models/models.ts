@@ -21,6 +21,8 @@ export interface Company {
   nextQuotationNumber: number;
   proformaPrefix: string;
   nextProformaNumber: number;
+  deliveryChallanPrefix: string;
+  nextDeliveryChallanNumber: number;
 }
 
 export interface Customer {
@@ -251,6 +253,75 @@ export interface ProformaInvoiceUpsert {
   shipToCity?: string;
   shipToState?: string;
   shipToPincode?: string;
+  items: LineItemInput[];
+}
+
+export interface DeliveryChallanItem {
+  id: number;
+  itemId: number | null;
+  itemName: string;
+  description: string;
+  hsnSacCode: string;
+  quantity: number;
+  unit: ItemUnit;
+  rate: number;
+  gstPercent: number;
+  cgstAmount: number;
+  sgstAmount: number;
+  igstAmount: number;
+  amount: number;
+}
+
+export interface DeliveryChallan {
+  id: number;
+  challanNumber: string;
+  challanDate: string;
+  customerId: number;
+  customerName: string;
+  customerAddress: string;
+  customerCity: string;
+  customerState: string;
+  customerPincode: string;
+  customerPhone: string;
+  customerGstin?: string | null;
+  placeOfSupply: string;
+  isInterState: boolean;
+  shipToName: string;
+  shipToAddress: string;
+  shipToCity: string;
+  shipToState: string;
+  shipToPincode: string;
+  referenceNo: string;
+  transporterName: string;
+  vehicleNumber: string;
+  lrNumber: string;
+  ewayBillNumber: string;
+  subtotal: number;
+  cgstAmount: number;
+  sgstAmount: number;
+  igstAmount: number;
+  totalGst: number;
+  grandTotal: number;
+  notes?: string;
+  items: DeliveryChallanItem[];
+}
+
+export interface DeliveryChallanUpsert {
+  challanNumber?: string;
+  customerId: number;
+  challanDate: string;
+  notes?: string;
+  shipSameAsBilling: boolean;
+  shipToName?: string;
+  shipToAddress?: string;
+  shipToCity?: string;
+  shipToState?: string;
+  shipToPincode?: string;
+  referenceNo?: string;
+  transporterName?: string;
+  vehicleNumber?: string;
+  lrNumber?: string;
+  ewayBillNumber?: string;
   items: LineItemInput[];
 }
 

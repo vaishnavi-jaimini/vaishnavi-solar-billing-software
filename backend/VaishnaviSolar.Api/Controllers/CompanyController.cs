@@ -37,7 +37,9 @@ public class CompanyController : ControllerBase
             QuotationPrefix = c.QuotationPrefix,
             NextQuotationNumber = c.NextQuotationNumber,
             ProformaPrefix = c.ProformaPrefix,
-            NextProformaNumber = c.NextProformaNumber
+            NextProformaNumber = c.NextProformaNumber,
+            DeliveryChallanPrefix = c.DeliveryChallanPrefix,
+            NextDeliveryChallanNumber = c.NextDeliveryChallanNumber
         });
     }
 
@@ -81,6 +83,14 @@ public class CompanyController : ControllerBase
         if (dto.NextProformaNumber > 0)
         {
             c.NextProformaNumber = dto.NextProformaNumber;
+        }
+        if (!string.IsNullOrWhiteSpace(dto.DeliveryChallanPrefix))
+        {
+            c.DeliveryChallanPrefix = dto.DeliveryChallanPrefix;
+        }
+        if (dto.NextDeliveryChallanNumber > 0)
+        {
+            c.NextDeliveryChallanNumber = dto.NextDeliveryChallanNumber;
         }
         await _db.SaveChangesAsync();
         return await Get();

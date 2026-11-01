@@ -92,6 +92,11 @@ public class CustomersController : ControllerBase
         {
             return BadRequest("Cannot delete a customer with existing invoices.");
         }
+        bool hasChallans = await _db.DeliveryChallans.AnyAsync(d => d.CustomerId == id);
+        if (hasChallans)
+        {
+            return BadRequest("Cannot delete a customer with existing delivery challans.");
+        }
         _db.Customers.Remove(c);
         await _db.SaveChangesAsync();
         return NoContent();
