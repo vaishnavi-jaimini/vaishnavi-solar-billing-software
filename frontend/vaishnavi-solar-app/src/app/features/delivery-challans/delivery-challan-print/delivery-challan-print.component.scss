@@ -200,6 +200,13 @@
     max-width: none;
     width: 100%;
     break-after: page;
+    // The app's default line height made each copy slightly taller than A4, pushing the signatures to a
+    // second page; a tighter line height keeps a typical challan copy on one page.
+    line-height: 1.35;
+  }
+  .declaration,
+  .footer {
+    break-inside: avoid;
   }
   .invoice-sheet:last-of-type {
     break-after: auto;
