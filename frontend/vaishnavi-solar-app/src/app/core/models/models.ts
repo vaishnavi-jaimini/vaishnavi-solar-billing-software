@@ -179,6 +179,7 @@ export interface Invoice {
 }
 
 export interface InvoiceUpsert {
+  invoiceNumber?: string;
   customerId: number;
   invoiceDate: string;
   notes?: string;

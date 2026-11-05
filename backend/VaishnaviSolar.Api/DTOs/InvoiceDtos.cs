@@ -70,6 +70,8 @@ public class InvoiceItemInputDto
 
 public class InvoiceUpsertDto
 {
+    // Only used when editing; new invoices always take the next number from company settings.
+    public string? InvoiceNumber { get; set; }
     public int CustomerId { get; set; }
     public DateTime InvoiceDate { get; set; } = DateTime.UtcNow;
     public string? Notes { get; set; }

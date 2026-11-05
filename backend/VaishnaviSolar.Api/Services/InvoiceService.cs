@@ -54,7 +54,7 @@ public class InvoiceService
         return invoice;
     }
 
-    // Editing keeps the invoice number and its payments. Stock from the old lines is put back before
+    // Editing keeps the payments, and the invoice number unless a new one is given. Stock from the old lines is put back before
     // the new lines are deducted, and the paid status is recalculated against the new total.
     public async Task<Invoice> UpdateInvoiceAsync(int id, InvoiceUpsertDto dto)
     {
@@ -62,6 +62,16 @@ public class InvoiceService
             .FirstOrDefaultAsync(i => i.Id == id)
             ?? throw new KeyNotFoundException("Invoice not found");
         var company = await _db.Companies.FirstAsync();
+
+        var newNumber = dto.InvoiceNumber?.Trim();
+        if (!string.IsNullOrEmpty(newNumber) && newNumber != invoice.InvoiceNumber)
+        {
+            if (await _db.Invoices.AnyAsync(i => i.Id != id && i.InvoiceNumber == newNumber))
+            {
+                throw new InvalidOperationException($"Invoice number {newNumber} is already used");
+            }
+            invoice.InvoiceNumber = newNumber;
+        }
 
         foreach (var line in invoice.Items)
         {

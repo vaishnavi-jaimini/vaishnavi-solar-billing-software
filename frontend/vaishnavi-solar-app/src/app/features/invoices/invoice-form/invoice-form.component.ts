@@ -54,6 +54,7 @@ export class InvoiceFormComponent implements OnInit {
   saving = false;
 
   form: FormGroup = this.fb.group({
+    invoiceNumber: [''],
     customerId: [null, Validators.required],
     invoiceDate: [new Date()],
     placeOfSupply: [''],
@@ -124,6 +125,7 @@ export class InvoiceFormComponent implements OnInit {
       inv.shipToState === customer.state &&
       inv.shipToPincode === customer.pincode;
     this.form.patchValue({
+      invoiceNumber: inv.invoiceNumber,
       customerId: inv.customerId,
       invoiceDate: new Date(inv.invoiceDate),
       placeOfSupply: inv.placeOfSupply,
@@ -285,6 +287,7 @@ export class InvoiceFormComponent implements OnInit {
     const value = this.form.getRawValue();
     const invoiceDate = value.invoiceDate || new Date();
     const dto = {
+        invoiceNumber: this.editId ? value.invoiceNumber : undefined,
         customerId: value.customerId,
         invoiceDate,
         notes: value.notes,

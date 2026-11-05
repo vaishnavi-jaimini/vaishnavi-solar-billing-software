@@ -192,9 +192,44 @@
   height: 50px;
 }
 
+// The print layout, applied on screen while the sheet's printed height is measured (see fitToOnePage).
+@mixin print-layout {
+  border: none;
+  padding: 10mm;
+  box-sizing: border-box;
+  max-width: none;
+  line-height: 1.35;
+
+  .items-table {
+    margin-bottom: 10px;
+
+    th, td {
+      padding: 4px 5px;
+      font-size: 10px;
+    }
+  }
+  .summary-block {
+    margin-bottom: 12px;
+  }
+  .footer {
+    margin-top: 16px;
+  }
+  .signature-space {
+    height: 40px;
+  }
+  .declaration {
+    margin-top: 12px;
+    padding-top: 8px;
+  }
+}
+
+.invoice-sheet.measuring {
+  @include print-layout;
+}
+
 @media print {
   // A zero page margin stops the browser printing its own date/time and page-title header and footer;
-  // the sheet's padding provides the margin instead, repeated on every page.
+  // the sheet's padding provides the margin instead.
   @page {
     size: A4;
     margin: 0;
@@ -203,22 +238,7 @@
     display: none !important;
   }
   .invoice-sheet {
-    border: none;
-    padding: 10mm;
-    box-sizing: border-box;
-    -webkit-box-decoration-break: clone;
-    box-decoration-break: clone;
-    max-width: none;
+    @include print-layout;
     width: 100%;
-  }
-  .items-table {
-    font-size: 10px;
-
-    th, td {
-      padding: 4px 5px;
-    }
-  }
-  .items-table tr {
-    page-break-inside: avoid;
   }
 }

@@ -5,7 +5,7 @@
 
 @if (invoice; as invoice) {
   @if (company; as company) {
-    <div class="invoice-sheet">
+    <div class="invoice-sheet" #sheet>
       <div class="invoice-header">
         <div>
           <img class="company-logo" src="/images/vaishnavi-solar-logo.png" alt="{{ company.name }}" />

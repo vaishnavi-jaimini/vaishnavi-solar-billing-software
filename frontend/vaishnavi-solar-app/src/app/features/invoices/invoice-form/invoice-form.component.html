@@ -98,6 +98,12 @@
 
   <form [formGroup]="form">
     <div class="spacer-row">
+      @if (editId) {
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Invoice No</mat-label>
+          <input matInput formControlName="invoiceNumber" />
+        </mat-form-field>
+      }
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Customer</mat-label>
         <mat-select formControlName="customerId" (selectionChange)="onCustomerSelected()">
