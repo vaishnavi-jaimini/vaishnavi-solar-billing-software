@@ -60,7 +60,44 @@
   box-sizing: border-box;
 }
 
+// Fades in after a short delay so quick requests don't flash the loader.
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  background-color: rgba(255, 255, 255, 0.7);
+  opacity: 0;
+  animation: loading-fade-in 0.2s ease-out 0.3s forwards;
+}
+
+.loading-text {
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.loading-hint {
+  font-size: 13px;
+  opacity: 0;
+  text-align: center;
+  padding: 0 16px;
+  animation: loading-fade-in 0.3s ease-out 5s forwards;
+}
+
+@keyframes loading-fade-in {
+  to {
+    opacity: 1;
+  }
+}
+
 @media print {
+  .loading-overlay {
+    display: none !important;
+  }
   .app-shell {
     height: auto !important;
     overflow: visible !important;

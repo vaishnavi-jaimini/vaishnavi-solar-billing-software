@@ -45,3 +45,12 @@
     </main>
   </mat-sidenav-content>
 </mat-sidenav-container>
+
+@if (loadingService.loading()) {
+  <div class="loading-overlay" role="status" aria-live="polite">
+    <mat-spinner diameter="48"></mat-spinner>
+    <div class="loading-text">Loading…</div>
+    <!-- The free server sleeps when idle, so the first request after a while can take up to a minute. -->
+    <div class="loading-hint">The server is starting up, this can take up to a minute.</div>
+  </div>
+}
