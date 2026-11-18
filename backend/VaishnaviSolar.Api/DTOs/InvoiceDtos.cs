@@ -52,6 +52,8 @@ public class InvoiceDto
     public decimal GrandTotal { get; set; }
     public decimal AmountPaid { get; set; }
     public decimal Balance => GrandTotal - AmountPaid;
+    public decimal? ManualAmountPaid { get; set; }
+    public decimal? ManualBalanceDue { get; set; }
     public InvoiceStatus Status { get; set; }
     public string? Notes { get; set; }
     public List<InvoiceItemDto> Items { get; set; } = new();
@@ -87,6 +89,8 @@ public class InvoiceUpsertDto
     public string? WorkOrderNo { get; set; }
     public string? PurchaseOrderNo { get; set; }
     public DateTime? PurchaseDate { get; set; }
+    public decimal? ManualAmountPaid { get; set; }
+    public decimal? ManualBalanceDue { get; set; }
     public List<InvoiceItemInputDto> Items { get; set; } = new();
 }
 

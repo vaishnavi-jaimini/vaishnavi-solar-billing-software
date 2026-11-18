@@ -52,6 +52,8 @@ public class InvoicesController : ControllerBase
         TotalGst = inv.TotalGst,
         GrandTotal = inv.GrandTotal,
         AmountPaid = inv.AmountPaid,
+        ManualAmountPaid = inv.ManualAmountPaid,
+        ManualBalanceDue = inv.ManualBalanceDue,
         Status = inv.Status,
         Notes = inv.Notes,
         Items = inv.Items.Select(i => new InvoiceItemDto

@@ -394,6 +394,14 @@ namespace VaishnaviSolar.Api.Migrations
                     b.Property<bool>("IsInterState")
                         .HasColumnType("bit");
 
+                    b.Property<decimal?>("ManualAmountPaid")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("ManualBalanceDue")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<string>("Notes")
                         .HasColumnType("nvarchar(max)");
 

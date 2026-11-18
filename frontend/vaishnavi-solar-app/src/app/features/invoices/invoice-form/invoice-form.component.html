@@ -86,8 +86,12 @@
         <div>{{ row.label }}: ₹{{ row.amount | number: '1.2-2' }}</div>
       }
       <div class="grand">Grand Total: ₹{{ inv.grandTotal | number: '1.2-2' }}</div>
-      <div>Paid: ₹{{ inv.amountPaid | number: '1.2-2' }}</div>
-      <div class="balance">Balance: ₹{{ inv.balance | number: '1.2-2' }}</div>
+      @if (inv.manualAmountPaid != null) {
+        <div>Amount Paid: ₹{{ inv.manualAmountPaid | number: '1.2-2' }}</div>
+      }
+      @if (inv.manualBalanceDue != null) {
+        <div class="balance">Balance Due: ₹{{ inv.manualBalanceDue | number: '1.2-2' }}</div>
+      }
     </div>
   }
 } @else {
@@ -253,6 +257,19 @@
         <div>{{ row.label }}: ₹{{ row.amount | number: '1.2-2' }}</div>
       }
       <div class="grand">Grand Total: ₹{{ grandTotal | number: '1.2-2' }}</div>
+    </div>
+
+    <div class="spacer-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Amount Paid (optional)</mat-label>
+        <input matInput type="number" formControlName="manualAmountPaid" />
+        <mat-hint>Leave blank to hide it on the invoice</mat-hint>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Balance Due (optional)</mat-label>
+        <input matInput type="number" formControlName="manualBalanceDue" />
+        <mat-hint>Leave blank to hide it on the invoice</mat-hint>
+      </mat-form-field>
     </div>
 
     <button mat-flat-button color="primary" type="button" [disabled]="saving" (click)="save()">

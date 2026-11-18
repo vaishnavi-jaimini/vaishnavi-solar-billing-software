@@ -173,6 +173,8 @@ public class InvoiceService
         invoice.PurchaseDate = dto.PurchaseDate.HasValue
             ? DateTime.SpecifyKind(dto.PurchaseDate.Value.Date, DateTimeKind.Utc)
             : null;
+        invoice.ManualAmountPaid = dto.ManualAmountPaid;
+        invoice.ManualBalanceDue = dto.ManualBalanceDue;
         invoice.Notes = dto.Notes;
 
         decimal subtotal = 0, totalCgst = 0, totalSgst = 0, totalIgst = 0;

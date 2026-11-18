@@ -27,6 +27,9 @@ public class Invoice
     public decimal TotalGst { get; set; }
     public decimal GrandTotal { get; set; }
     public decimal AmountPaid { get; set; }
+    // Typed in on the invoice form and printed only when filled; independent of recorded payments.
+    public decimal? ManualAmountPaid { get; set; }
+    public decimal? ManualBalanceDue { get; set; }
     public InvoiceStatus Status { get; set; } = InvoiceStatus.Unpaid;
     public string? Notes { get; set; }
 

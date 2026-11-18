@@ -63,6 +63,8 @@ export class InvoiceFormComponent implements OnInit {
     workOrderNo: [''],
     purchaseOrderNo: [''],
     purchaseDate: [null],
+    manualAmountPaid: [null as number | null],
+    manualBalanceDue: [null as number | null],
     notes: [''],
     shipSameAsBilling: [true],
     shipToName: [''],
@@ -134,6 +136,8 @@ export class InvoiceFormComponent implements OnInit {
       workOrderNo: inv.workOrderNo,
       purchaseOrderNo: inv.purchaseOrderNo,
       purchaseDate: inv.purchaseDate ? new Date(inv.purchaseDate) : null,
+      manualAmountPaid: inv.manualAmountPaid ?? null,
+      manualBalanceDue: inv.manualBalanceDue ?? null,
       notes: inv.notes ?? '',
       shipSameAsBilling,
       shipToName: inv.shipToName,
@@ -277,6 +281,11 @@ export class InvoiceFormComponent implements OnInit {
     return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
   }
 
+  // A cleared number input can come back as null or ''; both mean "leave it off the invoice".
+  private optionalAmount(v: number | string | null): number | null {
+    return v === null || v === '' ? null : Number(v);
+  }
+
   save(): void {
     if (this.form.invalid || this.lines.length === 0) {
       this.form.markAllAsTouched();
@@ -303,6 +312,8 @@ export class InvoiceFormComponent implements OnInit {
         workOrderNo: value.workOrderNo,
         purchaseOrderNo: value.purchaseOrderNo,
         purchaseDate: this.toDateOnly(value.purchaseDate),
+        manualAmountPaid: this.optionalAmount(value.manualAmountPaid),
+        manualBalanceDue: this.optionalAmount(value.manualBalanceDue),
         items: value.lines
     };
     const request = this.editId ? this.invoiceService.update(this.editId, dto) : this.invoiceService.create(dto);

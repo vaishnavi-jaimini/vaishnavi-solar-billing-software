@@ -71,6 +71,8 @@ public class AppDbContext : DbContext
             e.Property(x => x.TotalGst).HasPrecision(18, 2);
             e.Property(x => x.GrandTotal).HasPrecision(18, 2);
             e.Property(x => x.AmountPaid).HasPrecision(18, 2);
+            e.Property(x => x.ManualAmountPaid).HasPrecision(18, 2);
+            e.Property(x => x.ManualBalanceDue).HasPrecision(18, 2);
             e.HasOne(x => x.Customer).WithMany(c => c.Invoices).HasForeignKey(x => x.CustomerId).OnDelete(DeleteBehavior.Restrict);
             e.HasIndex(x => x.InvoiceNumber).IsUnique();
         });

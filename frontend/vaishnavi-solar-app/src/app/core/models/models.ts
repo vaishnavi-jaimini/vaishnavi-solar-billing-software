@@ -173,6 +173,8 @@ export interface Invoice {
   grandTotal: number;
   amountPaid: number;
   balance: number;
+  manualAmountPaid?: number | null;
+  manualBalanceDue?: number | null;
   status: InvoiceStatus;
   notes?: string;
   items: InvoiceItem[];
@@ -195,6 +197,8 @@ export interface InvoiceUpsert {
   workOrderNo?: string;
   purchaseOrderNo?: string;
   purchaseDate?: string | null;
+  manualAmountPaid?: number | null;
+  manualBalanceDue?: number | null;
   items: LineItemInput[];
 }
 

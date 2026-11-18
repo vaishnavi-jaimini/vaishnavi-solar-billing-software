@@ -122,14 +122,18 @@
             <td>Grand Total</td>
             <td>₹{{ invoice.grandTotal | number: '1.2-2' }}</td>
           </tr>
-          <tr>
-            <td>Amount Paid</td>
-            <td>₹{{ invoice.amountPaid | number: '1.2-2' }}</td>
-          </tr>
-          <tr class="balance-row">
-            <td>Balance Due</td>
-            <td>₹{{ invoice.balance | number: '1.2-2' }}</td>
-          </tr>
+          @if (invoice.manualAmountPaid != null) {
+            <tr>
+              <td>Amount Paid</td>
+              <td>₹{{ invoice.manualAmountPaid | number: '1.2-2' }}</td>
+            </tr>
+          }
+          @if (invoice.manualBalanceDue != null) {
+            <tr class="balance-row">
+              <td>Balance Due</td>
+              <td>₹{{ invoice.manualBalanceDue | number: '1.2-2' }}</td>
+            </tr>
+          }
         </table>
       </div>
 
