@@ -152,6 +152,18 @@ using (var scope = app.Services.CreateScope())
             "CREATE INDEX IF NOT EXISTS \"IX_DeliveryChallanItems_ItemId\" ON \"DeliveryChallanItems\" (\"ItemId\"); " +
             "CREATE UNIQUE INDEX IF NOT EXISTS \"IX_DeliveryChallans_ChallanNumber\" ON \"DeliveryChallans\" (\"ChallanNumber\"); " +
             "CREATE INDEX IF NOT EXISTS \"IX_DeliveryChallans_CustomerId\" ON \"DeliveryChallans\" (\"CustomerId\");");
+
+        // Rows copied in with their own ids (e.g. when moving to a new database) leave the id counters behind,
+        // so new records would reuse existing ids. Move every id counter past the highest id in its table.
+        db.Database.ExecuteSqlRaw(
+            "DO $$ DECLARE r record; seq text; max_id bigint; BEGIN " +
+            "FOR r IN SELECT c.table_name FROM information_schema.columns c " +
+            "WHERE c.table_schema = 'public' AND c.column_name = 'Id' AND (c.is_identity = 'YES' OR c.column_default LIKE 'nextval%') LOOP " +
+            "seq := pg_get_serial_sequence(quote_ident(r.table_name), 'Id'); " +
+            "IF seq IS NOT NULL THEN " +
+            "EXECUTE format('SELECT COALESCE(MAX(\"Id\"), 0) FROM %I', r.table_name) INTO max_id; " +
+            "PERFORM setval(seq, max_id + 1, false); " +
+            "END IF; END LOOP; END $$;");
     }
     else
     {
