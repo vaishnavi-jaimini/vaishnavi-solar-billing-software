@@ -19,6 +19,9 @@ public class DeliveryChallanService
     public async Task<DeliveryChallan> CreateDeliveryChallanAsync(DeliveryChallanUpsertDto dto)
     {
         var company = await _db.Companies.FirstAsync();
+        // Skip numbers already taken (e.g. the counter was set back in Settings) instead of failing to save.
+        while (await _db.DeliveryChallans.AnyAsync(d => d.ChallanNumber == InvoiceService.FormatInvoiceNumber(company.DeliveryChallanPrefix, company.NextDeliveryChallanNumber)))
+            company.NextDeliveryChallanNumber += 1;
         var challan = new DeliveryChallan
         {
             ChallanNumber = InvoiceService.FormatInvoiceNumber(company.DeliveryChallanPrefix, company.NextDeliveryChallanNumber)

@@ -40,6 +40,9 @@ public class InvoiceService
     public async Task<Invoice> CreateInvoiceAsync(InvoiceUpsertDto dto)
     {
         var company = await _db.Companies.FirstAsync();
+        // Skip numbers already taken (e.g. the counter was set back in Settings) instead of failing to save.
+        while (await _db.Invoices.AnyAsync(i => i.InvoiceNumber == FormatInvoiceNumber(company.InvoicePrefix, company.NextInvoiceNumber)))
+            company.NextInvoiceNumber += 1;
         var invoice = new Invoice
         {
             InvoiceNumber = FormatInvoiceNumber(company.InvoicePrefix, company.NextInvoiceNumber),

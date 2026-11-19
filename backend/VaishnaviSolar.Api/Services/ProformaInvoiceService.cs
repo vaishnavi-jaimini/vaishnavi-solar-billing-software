@@ -17,6 +17,9 @@ public class ProformaInvoiceService
     public async Task<ProformaInvoice> CreateProformaInvoiceAsync(ProformaInvoiceUpsertDto dto)
     {
         var company = await _db.Companies.FirstAsync();
+        // Skip numbers already taken (e.g. the counter was set back in Settings) instead of failing to save.
+        while (await _db.ProformaInvoices.AnyAsync(p => p.ProformaNumber == InvoiceService.FormatInvoiceNumber(company.ProformaPrefix, company.NextProformaNumber)))
+            company.NextProformaNumber += 1;
         var proforma = new ProformaInvoice
         {
             ProformaNumber = InvoiceService.FormatInvoiceNumber(company.ProformaPrefix, company.NextProformaNumber)

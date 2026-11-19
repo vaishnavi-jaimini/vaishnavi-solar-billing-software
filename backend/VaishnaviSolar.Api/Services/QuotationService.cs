@@ -20,6 +20,9 @@ public class QuotationService
             ?? throw new InvalidOperationException("Customer not found");
 
         var company = await _db.Companies.FirstAsync();
+        // Skip numbers already taken (e.g. the counter was set back in Settings) instead of failing to save.
+        while (await _db.Quotations.AnyAsync(q => q.QuotationNumber == InvoiceService.FormatInvoiceNumber(company.QuotationPrefix, company.NextQuotationNumber)))
+            company.NextQuotationNumber += 1;
         var quotation = new Quotation
         {
             QuotationNumber = InvoiceService.FormatInvoiceNumber(company.QuotationPrefix, company.NextQuotationNumber),
